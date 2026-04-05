@@ -1,0 +1,208 @@
+// A&N Law Firm — SQLite dev; PostgreSQL in production (see Deploy)
+// Enum-like fields use String; allowed values in comments.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// role: PARTNER | ADMIN | MANAGER | EMPLOYEE
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  nameAr    String
+  role      String
+  teamId    String?
+  team      Team?    @relation("TeamMembers", fields: [teamId], references: [id])
+  avatarUrl String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  managedTeam Team? @relation("TeamManager")
+
+  clientsCreated  Client[]       @relation("ClientCreatedBy")
+  casesAssigned   Case[]         @relation("CaseAssigned")
+  casesCreated    Case[]         @relation("CaseCreatedBy")
+  tasksAssigned   Task[]         @relation("TaskAssigned")
+  tasksCreated    Task[]         @relation("TaskCreatedBy")
+  workLogs        WorkLog[]
+  workLogsApproved WorkLog[]     @relation("WorkLogApprovedBy")
+  filesUploaded   File[]
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+  conflictChecks  ConflictCheck[]
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  nameAr    String
+  managerId String   @unique
+  manager   User     @relation("TeamManager", fields: [managerId], references: [id])
+  createdAt DateTime @default(now())
+
+  members User[] @relation("TeamMembers")
+}
+
+// status: OPEN | ACTIVE | CLOSED
+// priority: LOW | MEDIUM | HIGH | URGENT
+model Case {
+  id             String    @id @default(cuid())
+  caseNumber     String    @unique
+  title          String
+  titleAr        String
+  description    String    @default("")
+  descriptionAr  String    @default("")
+  status         String
+  clientId       String
+  client         Client    @relation(fields: [clientId], references: [id])
+  assignedToId   String
+  assignedTo     User      @relation("CaseAssigned", fields: [assignedToId], references: [id])
+  createdById    String
+  createdBy      User      @relation("CaseCreatedBy", fields: [createdById], references: [id])
+  priority       String
+  openDate       DateTime
+  closeDate      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tasks    Task[]
+  workLogs WorkLog[]
+  files    File[]
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  nameAr      String
+  email       String   @default("")
+  phone       String   @default("")
+  address     String   @default("")
+  addressAr   String   @default("")
+  notes       String   @default("")
+  notesAr     String   @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation("ClientCreatedBy", fields: [createdById], references: [id])
+
+  cases    Case[]
+  workLogs WorkLog[]
+}
+
+// status: TODO | IN_PROGRESS | COMPLETED | CANCELLED
+// priority: LOW | MEDIUM | HIGH | URGENT
+model Task {
+  id            String    @id @default(cuid())
+  title         String
+  titleAr       String
+  description   String    @default("")
+  descriptionAr String    @default("")
+  status        String
+  priority      String
+  dueDate       DateTime?
+  caseId        String?
+  case          Case?     @relation(fields: [caseId], references: [id])
+  assignedToId  String
+  assignedTo    User      @relation("TaskAssigned", fields: [assignedToId], references: [id])
+  createdById   String
+  createdBy     User      @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model WorkType {
+  id            String   @id @default(cuid())
+  name          String
+  nameAr        String
+  description   String   @default("")
+  descriptionAr String   @default("")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workLogs WorkLog[]
+}
+
+model WorkLog {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id])
+  caseId          String
+  case            Case      @relation(fields: [caseId], references: [id])
+  workTypeId      String
+  workType        WorkType  @relation(fields: [workTypeId], references: [id])
+  hours           Float
+  isBillable      Boolean
+  date            DateTime
+  notes           String    @default("")
+  notesAr         String    @default("")
+  outlookEventId  String?
+  isApproved      Boolean   @default(false)
+  approvedById    String?
+  approvedBy      User?     @relation("WorkLogApprovedBy", fields: [approvedById], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model File {
+  id           String   @id @default(cuid())
+  name         String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  caseId       String
+  case         Case     @relation(fields: [caseId], references: [id])
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  version      Int      @default(1)
+  createdAt    DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   String
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+}
+
+// type: TASK_ASSIGNED | DEADLINE_REMINDER | CASE_STATUS_CHANGE | GENERAL
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  titleAr   String
+  message   String
+  messageAr String
+  type      String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model ConflictCheck {
+  id            String   @id @default(cuid())
+  searchTerm    String
+  searchTermAr  String
+  results       String
+  performedById String
+  performedBy   User     @relation(fields: [performedById], references: [id])
+  createdAt     DateTime @default(now())
+}
