@@ -14,7 +14,7 @@
     "db:push": "node node_modules/prisma/build/index.js db push",
     "db:seed": "node node_modules/tsx/dist/cli.mjs prisma/seed.ts",
     "db:studio": "node node_modules/prisma/build/index.js studio",
-    "render-build": "node node_modules/prisma/build/index.js generate && node node_modules/prisma/build/index.js db push && node node_modules/next/dist/bin/next build",
+    "render-build": "node node_modules/prisma/build/index.js generate && node node_modules/prisma/build/index.js db push && node node_modules/tsx/dist/cli.mjs prisma/seed.ts && node node_modules/next/dist/bin/next build",
     "next": "node node_modules/next/dist/bin/next"
   },
   "prisma": {

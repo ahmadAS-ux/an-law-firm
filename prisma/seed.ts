@@ -3,6 +3,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  const existing = await prisma.user.findFirst();
+  if (existing) {
+    console.log("Database already seeded — skipping.");
+    return;
+  }
+
   await prisma.auditLog.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.conflictCheck.deleteMany();
