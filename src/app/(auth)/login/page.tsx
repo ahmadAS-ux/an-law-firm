@@ -58,12 +58,16 @@ export default function LoginPage() {
   const [users, setUsers] = React.useState<PickUser[]>([]);
   const [selected, setSelected] = React.useState<string>("");
   const [busy, setBusy] = React.useState(false);
+  const [fetchError, setFetchError] = React.useState<string>("");
 
   React.useEffect(() => {
     void fetch("/api/auth/users")
       .then((r) => r.json())
-      .then((d) => setUsers(d.users ?? []))
-      .catch(() => {});
+      .then((d) => {
+        if (d.error) setFetchError(d.error);
+        setUsers(d.users ?? []);
+      })
+      .catch((e) => setFetchError(String(e)));
   }, []);
 
   React.useEffect(() => {
@@ -112,6 +116,11 @@ export default function LoginPage() {
                 <UserRound className="h-4 w-4" />
                 {t("login.pickUser")}
               </label>
+              {fetchError && (
+                <p className="rounded bg-red-900/40 px-2 py-1 text-xs text-red-400 break-all">
+                  {fetchError}
+                </p>
+              )}
               <Select
                 value={selected}
                 onValueChange={(v) => setSelected(v ?? "")}
