@@ -9,6 +9,29 @@
   }
 }
 
+/*
+ * ─── A&N BRAND COLOR SYSTEM ──────────────────────────────────────────────────
+ *
+ * Surface hierarchy (dark theme):
+ *   Page bg      #1A1A1A   → near-black
+ *   Sidebar bg   #141414
+ *   Card bg      #252525   → bg-[#252525]
+ *   Header bg    #1F1F1F
+ *
+ * Text on dark surfaces:
+ *   Primary      text-white            (#FFFFFF)
+ *   Secondary    text-gray-400         (#9CA3AF)  ← use for hints/subtitles
+ *   Disabled     text-gray-600         (#4B5563)
+ *   NEVER use    text-warm-gray        (#3D3D3D) on dark — too low contrast
+ *
+ * Accent:
+ *   Active/CTA   text-heritage-gold    (#B8963E)
+ *   On-gold text text-near-black       (#1A1A1A)
+ *
+ * Icons follow their sibling text color.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
 @layer base {
   .theme {
     --font-heading: var(--font-sans);

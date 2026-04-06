@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, Search } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -38,6 +39,24 @@ const pathTitles: Record<string, string> = {
   "/users": "nav.users",
   "/settings": "nav.settings",
 };
+
+function BrandLogo() {
+  const [imgError, setImgError] = React.useState(false);
+  if (imgError) {
+    return <span className="text-xl font-bold text-heritage-gold">AN</span>;
+  }
+  return (
+    <Image
+      src="/logo.png"
+      alt="A&N Law Firm"
+      width={36}
+      height={36}
+      className="object-contain"
+      onError={() => setImgError(true)}
+      priority
+    />
+  );
+}
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -77,8 +96,8 @@ export function AppHeader() {
           side="right"
           className="w-72 border-heritage-gold/20 bg-near-black p-0"
         >
-          <div className="border-b border-heritage-gold/20 p-4 text-xl font-bold text-heritage-gold">
-            AN
+          <div className="flex h-14 items-center border-b border-heritage-gold/20 px-4">
+            <BrandLogo />
           </div>
           <nav className="p-2">
             <AppSidebarNav mobile />

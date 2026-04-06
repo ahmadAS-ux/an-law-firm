@@ -15,6 +15,7 @@ import {
 import { useI18n } from "@/contexts/language-context";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { BidiStr } from "@/components/bidi";
 
 export function NotificationBell() {
   const router = useRouter();
@@ -62,7 +63,7 @@ export function NotificationBell() {
             key={n.id}
             onClick={() => n.link && router.push(n.link)}
           >
-            {lang === "ar" ? n.titleAr : n.title}
+            {lang === "ar" ? <BidiStr text={n.titleAr} /> : n.title}
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />

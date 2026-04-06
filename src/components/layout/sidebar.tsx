@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -17,6 +19,7 @@ import {
   Bell,
   UserCog,
   Settings,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/contexts/language-context";
@@ -25,6 +28,33 @@ import type { Role } from "@/lib/permissions";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-provider";
+
+function BrandLogo({ size = "sidebar" }: { size?: "sidebar" | "sheet" }) {
+  const [imgError, setImgError] = React.useState(false);
+  if (imgError) {
+    return (
+      <span
+        className={cn(
+          "font-bold text-heritage-gold",
+          size === "sidebar" ? "text-2xl" : "text-xl",
+        )}
+      >
+        AN
+      </span>
+    );
+  }
+  return (
+    <Image
+      src="/logo.png"
+      alt="A&N Law Firm"
+      width={size === "sidebar" ? 48 : 40}
+      height={size === "sidebar" ? 48 : 36}
+      className="object-contain"
+      onError={() => setImgError(true)}
+      priority
+    />
+  );
+}
 
 const links = [
   { href: "/", key: "nav.dashboard", icon: LayoutDashboard, guard: null },
@@ -159,23 +189,24 @@ export function AppSidebar() {
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-e border-heritage-gold/20 bg-[#141414] md:flex">
-      <div className="flex h-14 items-center justify-center border-b border-heritage-gold/20 text-2xl font-bold text-heritage-gold">
-        AN
+      <div className="flex h-14 items-center justify-center border-b border-heritage-gold/20 px-3">
+        <BrandLogo size="sidebar" />
       </div>
       <div className="flex-1 overflow-y-auto px-2">
         <AppSidebarNav />
       </div>
       <div className="space-y-2 border-t border-heritage-gold/20 p-3">
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs">
           <div className="truncate font-medium text-white">{user?.name}</div>
-          <div>{user?.role}</div>
+          <div className="text-gray-400">{user?.role}</div>
         </div>
         <LanguageSwitcher />
         <Button
-          variant="outline"
-          className="w-full border-heritage-gold/40"
+          variant="ghost"
+          className="w-full justify-start gap-2 text-gray-400 hover:bg-white/5 hover:text-white"
           onClick={() => void logout()}
         >
+          <LogOut className="h-4 w-4" />
           {t("logout")}
         </Button>
       </div>

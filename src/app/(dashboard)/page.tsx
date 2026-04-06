@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useI18n } from "@/contexts/language-context";
 import { useAuth } from "@/contexts/auth-provider";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Briefcase, ListTodo, Clock, Bell } from "lucide-react";
 
 export default function DashboardPage() {
   const { t } = useI18n();
@@ -54,32 +55,36 @@ export default function DashboardPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-heritage-gold/40">
-          <CardHeader>
-            <CardTitle className="text-base">{t("nav.cases")}</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">{t("nav.cases")}</CardTitle>
+            <Briefcase className="h-4 w-4 text-heritage-gold" />
           </CardHeader>
           <CardContent className="text-3xl font-semibold text-heritage-gold">
             {data.activeCases}
           </CardContent>
         </Card>
         <Card className="border-heritage-gold/40">
-          <CardHeader>
-            <CardTitle className="text-base">{t("nav.tasks")}</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">{t("nav.tasks")}</CardTitle>
+            <ListTodo className="h-4 w-4 text-heritage-gold" />
           </CardHeader>
           <CardContent className="text-3xl font-semibold text-heritage-gold">
             {data.pendingTasks}
           </CardContent>
         </Card>
         <Card className="border-heritage-gold/40">
-          <CardHeader>
-            <CardTitle className="text-base">Hours (7d)</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">Hours (7d)</CardTitle>
+            <Clock className="h-4 w-4 text-heritage-gold" />
           </CardHeader>
           <CardContent className="text-3xl font-semibold text-heritage-gold">
             {data.hoursThisWeek.toFixed(1)}
           </CardContent>
         </Card>
         <Card className="border-heritage-gold/40">
-          <CardHeader>
-            <CardTitle className="text-base">{t("nav.notifications")}</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">{t("nav.notifications")}</CardTitle>
+            <Bell className="h-4 w-4 text-heritage-gold" />
           </CardHeader>
           <CardContent className="text-3xl font-semibold text-heritage-gold">
             {data.unreadNotifications}

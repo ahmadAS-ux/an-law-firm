@@ -70,4 +70,12 @@ export const ar: Record<string, string> = {
   "logout": "خروج",
   "language.ar": "عربي",
   "language.en": "English",
+  "workLog.client": "العميل",
+  "workLog.case": "القضية",
+  "workLog.workType": "نوع العمل",
+  "workLog.hours": "الساعات",
+  "workLog.date": "التاريخ",
+  "workLog.billable": "قابل للفوترة",
+  "workLog.nonBillable": "غير قابل للفوترة",
+  "workLog.notes": "ملاحظات",
 };

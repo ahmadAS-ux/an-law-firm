@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,23 +14,28 @@ import {
 import { useI18n } from "@/contexts/language-context";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 export default function WorkLogsEntryPage() {
-  const { t } = useI18n();
-  const [clients, setClients] = React.useState<{ id: string; name: string }[]>(
-    [],
-  );
-  const [cases, setCases] = React.useState<
-    { id: string; caseNumber: string; clientId: string; title: string }[]
+  const { t, lang } = useI18n();
+  const [clients, setClients] = React.useState<
+    { id: string; name: string; nameAr: string }[]
   >([]);
-  const [types, setTypes] = React.useState<{ id: string; name: string }[]>([]);
+  const [cases, setCases] = React.useState<
+    { id: string; caseNumber: string; clientId: string; title: string; titleAr: string }[]
+  >([]);
+  const [types, setTypes] = React.useState<
+    { id: string; name: string; nameAr: string }[]
+  >([]);
   const [clientId, setClientId] = React.useState("");
   const [caseId, setCaseId] = React.useState("");
   const [workTypeId, setWorkTypeId] = React.useState("");
   const [hours, setHours] = React.useState("1");
   const [billable, setBillable] = React.useState(true);
-  const [notesOpen, setNotesOpen] = React.useState(false);
   const [notes, setNotes] = React.useState("");
+  const [date, setDate] = React.useState(
+    () => new Date().toISOString().slice(0, 10),
+  );
 
   React.useEffect(() => {
     void fetch("/api/clients")
@@ -61,37 +65,51 @@ export default function WorkLogsEntryPage() {
         workTypeId,
         hours: parseFloat(hours),
         isBillable: billable,
+        date,
         notes,
+        notesAr: notes,
       }),
     });
     if (!res.ok) {
-      toast.error("Failed");
+      const err = await res.json().catch(() => ({}));
+      toast.error(err.error ?? t("common.noData"));
       return;
     }
-    toast.success("Saved");
+    toast.success(t("common.save"));
     setHours("1");
     setNotes("");
+    setDate(new Date().toISOString().slice(0, 10));
+    setBillable(true);
   }
 
   return (
-    <form onSubmit={onSave} className="mx-auto max-w-lg space-y-4">
-      <div>
-        <Label>Client</Label>
-        <Select value={clientId} onValueChange={(v) => { setClientId(v ?? ""); setCaseId(""); }}>
+    <form onSubmit={onSave} className="mx-auto max-w-lg space-y-5">
+      {/* Client */}
+      <div className="space-y-1.5">
+        <Label>{t("workLog.client")}</Label>
+        <Select
+          value={clientId}
+          onValueChange={(v) => {
+            setClientId(v ?? "");
+            setCaseId("");
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder="—" />
           </SelectTrigger>
           <SelectContent>
             {clients.map((c) => (
               <SelectItem key={c.id} value={c.id}>
-                {c.name}
+                {lang === "ar" ? c.nameAr : c.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
-      <div>
-        <Label>Case</Label>
+
+      {/* Case */}
+      <div className="space-y-1.5">
+        <Label>{t("workLog.case")}</Label>
         <Select value={caseId} onValueChange={(v) => setCaseId(v ?? "")}>
           <SelectTrigger>
             <SelectValue placeholder="—" />
@@ -99,56 +117,108 @@ export default function WorkLogsEntryPage() {
           <SelectContent>
             {filteredCases.map((c) => (
               <SelectItem key={c.id} value={c.id}>
-                {c.caseNumber}
+                <span dir="ltr">{c.caseNumber}</span>
+                {" — "}
+                {lang === "ar" ? c.titleAr : c.title}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
-      <div>
-        <Label>Work type</Label>
-        <Select value={workTypeId} onValueChange={(v) => setWorkTypeId(v ?? "")}>
+
+      {/* Work type */}
+      <div className="space-y-1.5">
+        <Label>{t("workLog.workType")}</Label>
+        <Select
+          value={workTypeId}
+          onValueChange={(v) => setWorkTypeId(v ?? "")}
+        >
           <SelectTrigger>
             <SelectValue placeholder="—" />
           </SelectTrigger>
           <SelectContent>
             {types.map((w) => (
               <SelectItem key={w.id} value={w.id}>
-                {w.name}
+                {lang === "ar" ? w.nameAr : w.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
-      <div>
-        <Label>Hours</Label>
-        <Input
-          type="number"
-          step="0.25"
-          min="0"
-          value={hours}
-          onChange={(e) => setHours(e.target.value)}
+
+      {/* Hours + Date side by side */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label>{t("workLog.hours")}</Label>
+          <Input
+            type="number"
+            step="0.25"
+            min="0.25"
+            max="24"
+            value={hours}
+            onChange={(e) => setHours(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("workLog.date")}</Label>
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      {/* Billable toggle — two-button segment */}
+      <div className="space-y-1.5">
+        <Label>{t("workLog.billable")}</Label>
+        <div className="flex overflow-hidden rounded-md border border-heritage-gold/30">
+          <button
+            type="button"
+            onClick={() => setBillable(true)}
+            className={cn(
+              "flex-1 px-4 py-2 text-sm font-medium transition-colors",
+              billable
+                ? "bg-heritage-gold text-near-black"
+                : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            {t("workLog.billable")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setBillable(false)}
+            className={cn(
+              "flex-1 border-s border-heritage-gold/30 px-4 py-2 text-sm font-medium transition-colors",
+              !billable
+                ? "bg-heritage-gold text-near-black"
+                : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            {t("workLog.nonBillable")}
+          </button>
+        </div>
+      </div>
+
+      {/* Notes */}
+      <div className="space-y-1.5">
+        <Label>{t("workLog.notes")}</Label>
+        <Textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={3}
+          className="resize-none"
         />
       </div>
-      <div className="flex items-center gap-2">
-        <Switch checked={billable} onCheckedChange={setBillable} id="bill" />
-        <Label htmlFor="bill">Billable</Label>
-      </div>
-      <Button type="button" variant="link" onClick={() => setNotesOpen(!notesOpen)}>
-        Notes
-      </Button>
-      {notesOpen && (
-        <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
-      )}
+
       <Button
         type="submit"
         className="w-full bg-heritage-gold text-near-black hover:bg-heritage-gold/90"
       >
         {t("common.save")}
       </Button>
-      <p className="text-xs text-muted-foreground">
-        {/* TODO: Add Outlook calendar event creation here via Microsoft Graph API */}
-      </p>
     </form>
   );
 }

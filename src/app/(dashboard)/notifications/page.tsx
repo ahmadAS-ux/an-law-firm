@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/contexts/language-context";
+import { BidiStr } from "@/components/bidi";
 
 export default function NotificationsPage() {
   const { lang } = useI18n();
@@ -38,10 +39,10 @@ export default function NotificationsPage() {
           <li key={n.id} className={n.isRead ? "opacity-60" : ""}>
             {n.link ? (
               <Link href={n.link} className="text-heritage-gold">
-                {lang === "ar" ? n.titleAr : n.title}
+                {lang === "ar" ? <BidiStr text={n.titleAr} /> : n.title}
               </Link>
             ) : (
-              <span>{lang === "ar" ? n.titleAr : n.title}</span>
+              <span>{lang === "ar" ? <BidiStr text={n.titleAr} /> : n.title}</span>
             )}
           </li>
         ))}
