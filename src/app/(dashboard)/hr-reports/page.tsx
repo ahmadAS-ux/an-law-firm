@@ -348,7 +348,7 @@ export default function HrReportsPage() {
 
         {/* Employee filter — partners/admins only */}
         {isPartnerOrAdmin && (
-          <Select value={employeeId} onValueChange={setEmployeeId}>
+          <Select value={employeeId} onValueChange={(v) => setEmployeeId(v ?? "all")}>
             <SelectTrigger className="w-48 border-heritage-gold/30 bg-near-black text-white">
               <SelectValue placeholder={t("hr.filterAllEmployees")} />
             </SelectTrigger>
@@ -364,7 +364,7 @@ export default function HrReportsPage() {
         )}
 
         {/* Billable filter */}
-        <Select value={billableFilter} onValueChange={setBillableFilter}>
+        <Select value={billableFilter} onValueChange={(v) => setBillableFilter(v ?? "all")}>
           <SelectTrigger className="w-44 border-heritage-gold/30 bg-near-black text-white">
             <SelectValue />
           </SelectTrigger>
