@@ -79,6 +79,8 @@ type Totals = {
 
 type PickUser = { id: string; name: string; nameAr: string; role: string };
 
+type SortableKey = "name" | "role" | "totalHours" | "billableHours" | "nonBillableHours" | "billableRatio" | "casesCount";
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function weekRange() {
   const now = new Date();
@@ -193,7 +195,7 @@ export default function HrReportsPage() {
   const [employees, setEmployees] = React.useState<PickUser[]>([]);
   const [fetching, setFetching] = React.useState(false);
   const [expandedRow, setExpandedRow] = React.useState<string | null>(null);
-  const [sortKey, setSortKey] = React.useState<keyof EmployeeRow>("totalHours");
+  const [sortKey, setSortKey] = React.useState<SortableKey>("totalHours");
   const [sortAsc, setSortAsc] = React.useState(false);
 
   // Load employee list for filter dropdown
@@ -240,7 +242,7 @@ export default function HrReportsPage() {
   }, [fetchReport, isLoading, user]);
 
   // Sorting
-  function toggleSort(key: keyof EmployeeRow) {
+  function toggleSort(key: SortableKey) {
     if (sortKey === key) setSortAsc((v) => !v);
     else {
       setSortKey(key);
@@ -250,9 +252,11 @@ export default function HrReportsPage() {
 
   const sorted = React.useMemo(() => {
     return [...rows].sort((a, b) => {
-      const av = a[sortKey] as number | string;
-      const bv = b[sortKey] as number | string;
-      const cmp = typeof av === "number" ? av - (bv as number) : String(av).localeCompare(String(bv));
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      const cmp = typeof av === "number" && typeof bv === "number"
+        ? av - bv
+        : String(av).localeCompare(String(bv));
       return sortAsc ? cmp : -cmp;
     });
   }, [rows, sortKey, sortAsc]);
@@ -269,10 +273,14 @@ export default function HrReportsPage() {
 
   const isPartnerOrAdmin = user.role === "PARTNER" || user.role === "ADMIN";
 
-  function SortIcon({ col }: { col: keyof EmployeeRow }) {
-    if (sortKey !== col) return <span className="opacity-30 text-xs">↕</span>;
-    return sortAsc ? <ChevronUp className="inline h-3 w-3" /> : <ChevronDown className="inline h-3 w-3" />;
-  }
+  const SortIcon = ({ col }: { col: SortableKey }) =>
+    sortKey !== col ? (
+      <span className="opacity-30 text-xs">↕</span>
+    ) : sortAsc ? (
+      <ChevronUp className="inline h-3 w-3" />
+    ) : (
+      <ChevronDown className="inline h-3 w-3" />
+    );
 
   return (
     <div className="flex flex-col gap-6 p-1">
@@ -454,7 +462,7 @@ export default function HrReportsPage() {
                     ["nonBillableHours", t("hr.nonBillableHours")],
                     ["billableRatio", t("hr.billableRatio")],
                     ["casesCount", t("hr.cases")],
-                  ] as [keyof EmployeeRow, string][]
+                  ] as [SortableKey, string][]
                 ).map(([key, label]) => (
                   <TableHead
                     key={key}
