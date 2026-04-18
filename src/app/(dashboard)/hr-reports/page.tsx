@@ -109,15 +109,10 @@ function roleLabel(role: string, t: (k: string) => string) {
 
 // ─── CSV export ───────────────────────────────────────────────────────────────
 function exportCsv(rows: EmployeeRow[], lang: "ar" | "en") {
-  const headers = [
-    "Employee",
-    "Role",
-    "Total Hours",
-    "Billable Hours",
-    "Non-Billable Hours",
-    "Billable %",
-    "Cases",
-  ];
+  const headers =
+    lang === "ar"
+      ? ["الموظف", "الدور", "إجمالي الساعات", "ساعات قابلة للفوترة", "ساعات غير قابلة للفوترة", "نسبة الفوترة", "القضايا"]
+      : ["Employee", "Role", "Total Hours", "Billable Hours", "Non-Billable Hours", "Billable %", "Cases"];
   const lines = [
     headers.join(","),
     ...rows.map((r) =>

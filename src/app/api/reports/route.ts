@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { hasPermission } from "@/lib/permissions";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const user = await getCurrentUser();
   if (!user || !hasPermission(user.role, "viewHRReports")) {
@@ -22,7 +24,7 @@ export async function GET(request: Request) {
       ? {
           date: {
             ...(from ? { gte: new Date(from) } : {}),
-            ...(to ? { lte: new Date(to) } : {}),
+            ...(to ? { lte: new Date(new Date(to).setHours(23, 59, 59, 999)) } : {}),
           },
         }
       : {};
