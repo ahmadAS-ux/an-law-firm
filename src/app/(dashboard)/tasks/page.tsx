@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/contexts/language-context";
+
 export default function TasksPage() {
+  const { t } = useI18n();
   const [view, setView] = React.useState<"table" | "kanban">("table");
   const [tasks, setTasks] = React.useState<
     {
@@ -21,7 +24,7 @@ export default function TasksPage() {
       status: string;
       priority: string;
       dueDate: string | null;
-      case: { caseNumber: string } | null;
+      case: { caseNumber: string; client: { name: string } } | null;
       assignedTo: { name: string };
     }[]
   >([]);
@@ -50,6 +53,7 @@ export default function TasksPage() {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Case</TableHead>
+              <TableHead>{t("tasks.client")}</TableHead>
               <TableHead>Assignee</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Due</TableHead>
@@ -64,6 +68,13 @@ export default function TasksPage() {
                   </Link>
                 </TableCell>
                 <TableCell>{x.case?.caseNumber ?? "—"}</TableCell>
+                <TableCell>
+                  {x.case?.client ? (
+                    <bdi dir="ltr">{x.case.client.name}</bdi>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
                 <TableCell>{x.assignedTo.name}</TableCell>
                 <TableCell>
                   <Badge>{x.status}</Badge>

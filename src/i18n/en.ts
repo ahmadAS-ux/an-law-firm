@@ -108,4 +108,6 @@ export const en: Record<string, string> = {
   "hr.billable": "Billable",
   "hr.hours": "Hours",
   "hr.notes": "Notes",
+  "cases.dateOpened": "Date Opened",
+  "tasks.client": "Client",
 };

@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   }
   if (search) {
     where.OR = [
-      { caseNumber: { contains: search } },
+      { caseNumber: { contains: search.toUpperCase() } },
       { title: { contains: search } },
       { titleAr: { contains: search } },
     ];

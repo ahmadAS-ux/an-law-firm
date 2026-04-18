@@ -13,8 +13,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/contexts/language-context";
 
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
 export default function CasesPage() {
-  const { lang } = useI18n();
+  const { t } = useI18n();
   const [cases, setCases] = React.useState<
     {
       id: string;
@@ -24,7 +29,7 @@ export default function CasesPage() {
       priority: string;
       client: { name: string };
       assignedTo: { name: string };
-      openDate: string;
+      createdAt: string;
     }[]
   >([]);
 
@@ -37,14 +42,24 @@ export default function CasesPage() {
   return (
     <div className="overflow-x-auto rounded-md border border-heritage-gold/20">
       <Table>
+        <colgroup>
+          <col className="w-36" />
+          <col className="w-auto" />
+          <col className="w-40" />
+          <col className="w-28" />
+          <col className="w-28" />
+          <col className="w-36" />
+          <col className="w-32" />
+        </colgroup>
         <TableHeader>
           <TableRow>
             <TableHead>#</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Client</TableHead>
+            <TableHead>{t("cases.title")}</TableHead>
+            <TableHead>{t("workLog.client")}</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Assigned</TableHead>
+            <TableHead>{t("cases.dateOpened")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,13 +70,14 @@ export default function CasesPage() {
                   {c.caseNumber}
                 </Link>
               </TableCell>
-              <TableCell>{lang === "ar" ? c.title : c.title}</TableCell>
+              <TableCell>{c.title}</TableCell>
               <TableCell>{c.client.name}</TableCell>
               <TableCell>
                 <Badge>{c.status}</Badge>
               </TableCell>
               <TableCell>{c.priority}</TableCell>
               <TableCell>{c.assignedTo.name}</TableCell>
+              <TableCell>{formatDate(c.createdAt)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

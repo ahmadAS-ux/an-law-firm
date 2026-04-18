@@ -106,4 +106,6 @@ export const ar: Record<string, string> = {
   "hr.billable": "قابل للفوترة",
   "hr.hours": "الساعات",
   "hr.notes": "ملاحظات",
+  "cases.dateOpened": "تاريخ الفتح",
+  "tasks.client": "العميل",
 };
