@@ -46,6 +46,66 @@
 
 ## ✅ Fixed Bugs
 
+### BUG-011 — Global search always redirected to Clients page
+- **Found by:** UI/UX staging audit
+- **Date:** 2026-05-01
+- **Module:** Header / Global Search
+- **Steps to reproduce:** Go to Cases or Tasks → type in the header search bar → press Enter
+- **Expected:** Search stays on current module page
+- **Actual:** Always redirected to /clients?search=...
+- **Priority:** High
+- **Status:** Fixed in v0.4.2 — onSearch now checks pathname prefix before routing
+
+### BUG-012 — Admin Settings page was blank
+- **Found by:** UI/UX staging audit
+- **Date:** 2026-05-01
+- **Module:** Settings
+- **Steps to reproduce:** Log in as Admin → click Settings in sidebar
+- **Expected:** Firm info, system info, language toggle, M365 section
+- **Actual:** Only rendered `<p>الإعدادات</p>`
+- **Priority:** High
+- **Status:** Fixed in v0.4.2 — full settings page built with 4 sections
+
+### BUG-013 — Missing "Add Case" button
+- **Found by:** UI/UX staging audit
+- **Date:** 2026-05-01
+- **Module:** Cases
+- **Steps to reproduce:** Navigate to Cases module as Partner/Admin/Manager
+- **Expected:** Gold "إضافة قضية" button at top-right
+- **Actual:** No button — no way to create a case from the UI
+- **Priority:** High
+- **Status:** Fixed in v0.4.2 — button + dialog added, POSTs to /api/cases
+
+### BUG-014 — Missing "Add Task" button
+- **Found by:** UI/UX staging audit
+- **Date:** 2026-05-01
+- **Module:** Tasks
+- **Steps to reproduce:** Navigate to Tasks module
+- **Expected:** Gold "إضافة مهمة" button
+- **Actual:** No button — no way to create a task from the UI
+- **Priority:** High
+- **Status:** Fixed in v0.4.2 — button + dialog added, POSTs to /api/tasks
+
+### BUG-015 — Missing "Add Work Type" button
+- **Found by:** UI/UX staging audit
+- **Date:** 2026-05-01
+- **Module:** Services / Work Types
+- **Steps to reproduce:** Log in as Admin → navigate to Work Types
+- **Expected:** Gold "إضافة نوع عمل" button
+- **Actual:** No button — no way to create a work type from the UI
+- **Priority:** Medium
+- **Status:** Fixed in v0.4.2 — button + dialog added, POSTs to /api/work-types
+
+### BUG-016 — Conflict Check shows stale results during a new search
+- **Found by:** Code review (UI/UX audit follow-up)
+- **Date:** 2026-05-01
+- **Module:** Conflict Check
+- **Steps to reproduce:** Search for term A → see results → immediately search for term B → previous results remain visible during fetch
+- **Expected:** Previous results cleared immediately; spinner shown; "No conflicts found" if empty
+- **Actual:** Stale results remain until new fetch completes, making it appear the search returned nothing
+- **Priority:** Medium
+- **Status:** Fixed in v0.4.2 — rows cleared before fetch, loading spinner added, no-results message added
+
 ### BUG-008 — HR Reports `to` date filter excludes same-day logs
 - **Found by:** Claude Code verification (staging review)
 - **Date:** 2026-04-18

@@ -41,6 +41,13 @@ Copy this template and paste at the top of the relevant section:
 
 ## ✅ Completed Enhancements
 
+### UI/UX audit fixes from staging review
+- **Reported by:** Automated staging audit (Antigravity)
+- **Date:** 2026-05-01
+- **Module:** Global (header, settings, cases, tasks, services, conflict-check)
+- **Description:** 6 confirmed bugs fixed: scoped header search, settings page built out, Add Case / Add Task / Add Work Type buttons added with dialogs, conflict check loading state added
+- **Status:** Done in v0.4.2
+
 ### HR Reports module — verified and gaps patched
 - **Reported by:** Claude Code verification (staging review)
 - **Date:** 2026-04-18

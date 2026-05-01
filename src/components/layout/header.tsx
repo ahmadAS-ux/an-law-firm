@@ -78,7 +78,11 @@ export function AppHeader() {
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
     if (!q.trim()) return;
-    router.push(`/clients?search=${encodeURIComponent(q.trim())}`);
+    const encoded = encodeURIComponent(q.trim());
+    if (pathname.startsWith("/cases")) { router.push(`/cases?search=${encoded}`); return; }
+    if (pathname.startsWith("/tasks")) { router.push(`/tasks?search=${encoded}`); return; }
+    if (pathname.startsWith("/clients")) { router.push(`/clients?search=${encoded}`); return; }
+    router.push(`/clients?search=${encoded}`);
   }
 
   return (

@@ -1,6 +1,6 @@
 # A&N LPMS — Roadmap
 
-> **Current Version:** `v0.4.0`
+> **Current Version:** `v0.4.2`
 > **Stage:** Phase 1 — Active Development (Staging on Render.com)
 > **Next Milestone:** `v1.0.0` = Live on Azure with Microsoft SSO
 
