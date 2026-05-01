@@ -15,6 +15,7 @@ import { useAuth } from "@/contexts/auth-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -142,10 +143,12 @@ export function AppHeader() {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>
-            <div className="font-medium">{user?.name}</div>
-            <div className="text-xs text-muted-foreground">{user?.role}</div>
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>
+              <div className="font-medium">{user?.name}</div>
+              <div className="text-xs text-muted-foreground">{user?.role}</div>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => router.push("/settings")}>
             {t("nav.settings")}
