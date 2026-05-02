@@ -45,10 +45,24 @@
 
 ### Infrastructure
 - [ ] 🔴 HTTPS only — no HTTP in production
+> **Render Dashboard Override:** `render.yaml` exists in repo but is silently overridden by Render dashboard settings. Build commands and plan are managed in the Render web UI, not the yaml file. The yaml is kept for documentation purposes only.
 - [ ] 🟠 NEXTAUTH_SECRET is a strong random string (not default/example value)
 - [ ] 🟠 Node.js version pinned (`engines` in package.json)
 - [ ] 🟡 Dependency audit run: `npm audit` before go-live
 - [ ] 🟡 Rate limiting on API routes (prevent abuse)
+
+---
+
+## Permissions Matrix Decisions
+
+| Decision | Reasoning |
+|----------|-----------|
+| PARTNER has `manageUsers: true` | Owner override — partners must be able to add/remove staff without going through admin |
+| PARTNER has `systemSettings: true` | Owner override — firm-level settings are the partners' responsibility |
+| PARTNER has `viewAuditLog: true` | Legal oversight requirement |
+| ADMIN has `manageUsers` + `systemSettings` + `viewAuditLog` | Day-to-day operational owner — same powers as partner for these |
+| MANAGER `assignToTeam: true`, `assignToAnyone: false` | Managers can delegate within their team, not across the whole firm |
+| EMPLOYEE `createClientCase: true`, `viewAllClients: false` | Employees can intake new clients/cases (front-desk style) but only see clients they were assigned to or created |
 
 ---
 

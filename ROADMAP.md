@@ -1,6 +1,6 @@
 # A&N LPMS — Roadmap
 
-> **Current Version:** `v0.4.2`
+> **Current Version:** `v0.4.3`
 > **Stage:** Phase 1 — Active Development (Staging on Render.com)
 > **Next Milestone:** `v1.0.0` = Live on Azure with Microsoft SSO
 
@@ -55,6 +55,48 @@ Examples:
 - [ ] Invoicing & Billing module
 - [ ] Advanced reporting / analytics
 - [ ] Client portal (optional)
+
+---
+
+## Schema Migrations Required Before Phase 2
+
+> Migration session target: v0.5.0 (one dedicated session)
+> Estimated time: 2 hours including local testing
+> These must land before the Invoicing module can be built.
+
+### 1. Add `Invoice` model
+Fields: `id`, `invoiceNumber` (unique), `clientId`, `caseId?`, `issueDate`, `dueDate`, `subtotal` (Float), `vat` (Float), `total` (Float), `currency` (String, default "SAR"), `status` (DRAFT|SENT|PAID|OVERDUE|CANCELLED), `notes`, `notesAr`, `createdById`, `createdAt`, `updatedAt`
+
+### 2. Add `InvoiceLine` model
+Fields: `id`, `invoiceId`, `workLogId?` (link to billable work log), `description`, `descriptionAr`, `quantity` (Float), `rate` (Float), `amount` (Float)
+
+### 3. Add `Payment` model
+Fields: `id`, `invoiceId`, `amount` (Float), `paidAt` (DateTime), `method` (BANK_TRANSFER|CHECK|CASH|OTHER), `reference`, `notes`
+
+### 4. Add `BillingRate` model
+Fields: `id`, `userId?` (rate per lawyer), `workTypeId?` (rate per work type), `hourlyRate` (Float), `currency`, `effectiveFrom`, `effectiveTo?`
+
+### 5. Modify `File` model
+Make `caseId` optional, add `clientId?` and `invoiceId?`. Files need to attach to multiple entity types: case files, client KYC docs, invoice PDFs, firm-level templates.
+
+### 6. Add `Hearing` model (required before Phase C Outlook sync)
+Fields: `id`, `caseId`, `scheduledAt` (DateTime), `location`, `locationAr`, `hearingType` (String), `outlookEventId?` (String), `notes`, `notesAr`, `createdAt`, `updatedAt`
+Reason: cases have multiple hearings; Outlook events sync per-hearing, not per-case.
+
+### 7. Add `@@index` declarations on existing tables
+- `AuditLog`: `@@index([userId, createdAt])`
+- `WorkLog`: `@@index([userId, date])`, `@@index([caseId])`
+- `Notification`: `@@index([userId, isRead])`
+- `Case`: `@@index([clientId])`, `@@index([assignedToId, status])`
+- `Task`: `@@index([assignedToId, status])`
+
+### 8. Add explicit `onDelete: Restrict` to key relations
+- `Case.client` relation
+- `Case.assignedTo` relation
+- `WorkLog.case` relation
+- `WorkLog.client` relation
+
+Reason: Prisma defaults to Restrict, but explicit declaration prevents future accidental cascade deletes that would destroy legal records.
 
 ---
 

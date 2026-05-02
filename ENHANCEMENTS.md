@@ -23,7 +23,19 @@ Copy this template and paste at the top of the relevant section:
 
 ## 🔴 High Priority
 
-*(None logged yet)*
+### i18n coverage gaps (audit findings)
+- **Reported by:** Documentation audit
+- **Date:** 2026-05-02
+- **Module:** Global / multiple modules
+- **Description:** Translation keys missing for several modules:
+    - Audit Log: only title key exists, no body content
+    - Notifications: only title, no notification type labels
+    - Files: only title, no upload/version/preview keys
+    - Users: only title, no role labels in user list context
+    - No common validation keys (required, invalid email, min length, phone format)
+    - No common toast keys (saved, deleted, error, loading)
+- **Priority:** High (blocks Gate 5 and new Gate 12)
+- **Status:** Pending — scheduled for v0.5.0
 
 ---
 

@@ -199,6 +199,7 @@ If Azure migration breaks anything:
 | 2026-04-18 | Keep Render live during migration | Rollback safety — switch DNS only when Azure stable |
 | 2026-04-18 | Phase C requires Phase A + B complete | Calendar API requires SSO + production environment |
 | 2026-04-18 | Invoicing links to external accounting system | Not standalone — integration approach TBD once accounting system confirmed |
+| 2026-05-02 | Hearing model required before Phase C | Cases have multiple hearings; Outlook sync needs per-hearing `outlookEventId`, not per-case. Schema migration must complete during or before Phase B. |
 
 ---
 

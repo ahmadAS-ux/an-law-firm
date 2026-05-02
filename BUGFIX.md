@@ -46,6 +46,19 @@
 
 ## ✅ Fixed Bugs
 
+### BUG-017 — Production crash: DropdownMenuLabel/DropdownMenuGroup Base UI error
+- **Found by:** Staging deploy verification
+- **Date:** 2026-05-01
+- **Module:** Header / Profile Menu
+- **Steps to reproduce:** Log in as any role → click the user profile avatar in the top-right header
+- **Expected:** Profile dropdown opens normally
+- **Actual:** Catastrophic client-side exception (Base UI error #31: `useMenuGroupContext()` called outside a `Menu.Group` ancestor), crashing every page
+- **Root cause:** Base UI `MenuPrimitive.GroupLabel` calls `useMenuGroupContext()` and throws when rendered without a `Menu.Group` ancestor. `DropdownMenuLabel` was rendered outside `DropdownMenuGroup` in `src/components/layout/header.tsx`
+- **Fix:** Wrapped `DropdownMenuLabel` in `DropdownMenuGroup` in `src/components/layout/header.tsx`
+- **Lesson:** `npm run dev` hides Base UI context errors — always run `npm run build && npm start` before pushing to staging
+- **Priority:** Critical
+- **Status:** Fixed in v0.4.3
+
 ### BUG-011 — Global search always redirected to Clients page
 - **Found by:** UI/UX staging audit
 - **Date:** 2026-05-01

@@ -55,26 +55,53 @@
 
 ### Gate 11: Data Ownership & Integration Check ✅
 
-For every NEW feature or Phase that creates or consumes data:
+For every NEW feature or module that creates or consumes data:
 
 **Data source:**
-- [ ] Every piece of data has a clear single source of truth (Orgadata file / manual entry / external system)
-- [ ] If two systems produce the same data field (e.g. project name from Orgadata AND from ERP) → conflict resolution is defined before coding starts
+- [ ] Every piece of data has a clear single source of truth (manual entry / external system / file upload)
+- [ ] If two modules produce the same data field (e.g. client name from intake AND from conflict check) → conflict resolution is defined before coding starts
 
 **Data binding:**
-- [ ] Every record is bound to its parent entity via a foreign key (project_id / lead_id / request_id)
+- [ ] Every record is bound to its parent entity via a foreign key (clientId / caseId / matterId / invoiceId)
 - [ ] It is impossible to create an unbound record unless explicitly designed that way
 - [ ] If unbound records are allowed → there is a notification or warning visible to Admin
 
 **Cross-system data flow:**
-- [ ] If this feature consumes data from a previous Phase or system → the DB foreign key linking them is documented in CODE_STRUCTURE.md before coding starts
-- [ ] If the foreign key is missing from an existing table → an idempotent ALTER TABLE migration is added
+- [ ] If this feature consumes data from another module → the FK linking them is documented before coding starts
+- [ ] If a hearing references a case → the foreign key must be explicit, not a string
+- [ ] If invoices reference work logs → relationship must be defined in schema before coding starts
+- [ ] If the foreign key is missing from an existing table → an idempotent migration is added
 
-**Conflict handling:**
-- [ ] If data comes from an external file (e.g. Orgadata .docx) AND from user input → conflict is detected server-side and surfaced to the user — never silently overwritten
-- [ ] User confirmation is required before any system name/value is updated based on file content
+**FAIL if:** Any record can be created without a parent entity when one is required, OR if two modules can conflict without the user being notified.
 
-**FAIL if:** Any record can be created without a parent entity when one is required, OR if two data sources can conflict without the user being notified.
+---
+
+### Gate 12: i18n Coverage Check ✅
+
+Every new module must have keys in both `src/i18n/ar.ts` and `src/i18n/en.ts` for:
+
+- [ ] Module title (`nav.X` and `X.title`)
+- [ ] Add / Edit / Delete button labels
+- [ ] List-empty state ("No data yet")
+- [ ] Form field labels (every input)
+- [ ] Success toast keys (added, updated, deleted)
+- [ ] Error toast keys (failed to add, failed to load)
+- [ ] All validation messages (required, invalid email, min length)
+
+**FAIL if:** Any user-visible string is hardcoded in a component.
+
+---
+
+### Gate 13: Schema Index Check ✅
+
+Any new model must declare `@@index([...])` for:
+
+- [ ] `userId` + `date` combinations (for filtered lists)
+- [ ] Foreign keys used in `WHERE` clauses
+- [ ] `status` fields used for tab filtering
+- [ ] Boolean filter fields (`isRead`, `isApproved`)
+
+**FAIL if:** A list query will scan the entire table without an index.
 
 ---
 

@@ -99,6 +99,16 @@
 prisma generate → prisma db push → tsx seed.ts → next build
 ```
 
+> ⚠️ `render.yaml` is overridden by the Render dashboard. Any build command change must be made in BOTH `render.yaml` (for docs) AND the Render dashboard (for actual effect). The Render dashboard is the source of truth.
+
+## Pre-Push Verification
+
+Always run before pushing:
+1. `npm run build` — must pass with zero TypeScript errors
+2. `npm start` — must boot cleanly (test for 5–10 seconds, then CTRL+C)
+
+`npm run dev` hides certain runtime errors (especially Base UI context errors). Only `npm start` catches them.
+
 ## Required Environment Variables
 
 ```
