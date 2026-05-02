@@ -80,10 +80,13 @@ export function AppHeader() {
     e.preventDefault();
     if (!q.trim()) return;
     const encoded = encodeURIComponent(q.trim());
-    if (pathname.startsWith("/cases")) { router.push(`/cases?search=${encoded}`); return; }
-    if (pathname.startsWith("/tasks")) { router.push(`/tasks?search=${encoded}`); return; }
-    if (pathname.startsWith("/clients")) { router.push(`/clients?search=${encoded}`); return; }
-    router.push(`/clients?search=${encoded}`);
+    if (pathname.startsWith("/cases"))     { router.push(`/cases?search=${encoded}`);     return; }
+    if (pathname.startsWith("/tasks"))     { router.push(`/tasks?search=${encoded}`);     return; }
+    if (pathname.startsWith("/clients"))   { router.push(`/clients?search=${encoded}`);   return; }
+    if (pathname.startsWith("/work-logs")) { router.push(`/work-logs?search=${encoded}`); return; }
+    if (pathname.startsWith("/files"))     { router.push(`/files?search=${encoded}`);     return; }
+    if (pathname.startsWith("/users"))     { router.push(`/users?search=${encoded}`);     return; }
+    // Pages without a wired search (Dashboard, Settings, Calendar, etc.) — stay put
   }
 
   return (

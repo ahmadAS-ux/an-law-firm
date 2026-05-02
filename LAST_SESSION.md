@@ -1,61 +1,52 @@
 ---
-SESSION SUMMARY — v0.4.4
-Date: 2026-05-02
+SESSION SUMMARY — v0.4.5
+Date: 2026-05-03
+
 What was done:
-  Part A — Documentation cleanup (no app code changes except permissions.ts):
-    - ROADMAP.md: version bumped to v0.4.3; full schema migration plan added as
-      "Schema Migrations Required Before Phase 2" (8 items, target v0.5.0)
-    - BUGFIX.md: BUG-017 added (DropdownMenuLabel crash, fixed in v0.4.3)
-    - SECURITY.md: new "Permissions Matrix Decisions" table added; Render
-      dashboard override note added to Infrastructure section
-    - CLAUDE.md: render.yaml warning added to Build Sequence; Pre-Push
-      Verification section added (npm run build + npm start)
-    - QUALITY_GATES.md: Gate 11 rewritten for legal practice context (removed
-      ERP/Orgadata references); Gates 12 (i18n coverage) and 13 (schema indexes)
-      added
-    - ENHANCEMENTS.md: i18n coverage gaps logged as High priority, v0.5.0
-    - UI_UX_REVIEW.md: fully rewritten with Resolution Status column on every
-      issue; sign-off updated to PARTIAL
-    - README.md: Next.js boilerplate replaced with project-specific content
-    - CHANGELOG.md: created, covering v0.1.x through v0.4.3
-    - AZURE.md: Hearing model decision appended to Decisions Log
-  Part B — Permissions fix:
-    - src/lib/permissions.ts: PARTNER.manageUsers false->true,
-      PARTNER.systemSettings false->true (Ahmad's explicit decision)
-    - Build verified: next build passes with zero TypeScript errors (36/36 pages)
-  Part C — Schema audit logged in ROADMAP.md (no schema changes made).
-  Step 6b grep result: zero matches for qr-asset-manager/onrender.com in src/.
-  Codebase clean. External domain leakage flagged for re-test on next staging
-  deploy.
+  Fixed all 8 confirmed bugs from the v0.4.4 Antigravity UI/UX staging audit.
+  The root cause of Add Case/Add Task failures was @base-ui/react/select not preserving item
+  text when its portal unmounts — SelectValue fell back to raw CUIDs, breaking both display
+  and form validation before any POST reached the server. Fixed by creating select-radix.tsx
+  (Radix/shadcn Select) and replacing Base UI Select in both dialogs. Also fixed header search
+  fallback (no longer redirects to /clients from unscoped pages), settings version (v0.4.5),
+  environment label (now uses NEXT_PUBLIC_APP_ENV instead of NODE_ENV), Conflict Check sidebar
+  visibility (hidden from Employee), and Hours (7d) Arabic translation.
 
 Files changed:
+  - src/components/ui/select-radix.tsx (NEW — Radix Select wrapper)
+  - src/app/(dashboard)/cases/page.tsx
+  - src/app/(dashboard)/tasks/page.tsx
+  - src/components/layout/header.tsx
+  - src/app/(dashboard)/settings/page.tsx
+  - src/components/layout/sidebar.tsx
+  - src/app/(dashboard)/page.tsx
+  - src/i18n/ar.ts
+  - src/i18n/en.ts
+  - .env.example
+  - CLAUDE.md
   - AZURE.md
   - BUGFIX.md
-  - CHANGELOG.md (new)
-  - CLAUDE.md
   - ENHANCEMENTS.md
-  - QUALITY_GATES.md
-  - README.md
   - ROADMAP.md
-  - SECURITY.md
-  - UI_UX_REVIEW.md (newly tracked in git)
-  - src/lib/permissions.ts
 
 Decisions made:
-  - PARTNER.manageUsers = true (owner override — confirmed by Ahmad)
-  - PARTNER.systemSettings = true (owner override — confirmed by Ahmad)
-  - render.yaml is docs-only; Render dashboard is source of truth for builds
-  - EMPLOYEE.createClientCase = true is correct (front-desk intake) — documented
-  - Hearing model required before Phase C (per-hearing outlookEventId needed)
+  - select-radix.tsx is now the required Select for any dialog that binds CUIDs as values.
+    Existing select.tsx (Base UI) stays for non-dialog usage; full migration planned for v0.5.x.
+  - Radix SelectItem with JSX children must include textValue="..." for correct trigger display.
+  - Environment discrimination: always use NEXT_PUBLIC_APP_ENV, not NODE_ENV, for UI labels.
+
+Manual action required from Ahmad:
+  ⚠️ Render dashboard → an-law-firm service → Environment → Add variable:
+  NEXT_PUBLIC_APP_ENV = staging
+  Save → Render redeploys automatically. Without this, Settings shows "Production" not "Staging".
+
+Conflicts flagged for Ahmad's review:
+  FIX 6 — Employee Add Case button: permissions matrix has createClientCase: true for EMPLOYEE.
+  UI audit recommends hiding the button. A TODO comment was added in cases/page.tsx.
+  Ahmad must decide: change EMPLOYEE createClientCase to false in permissions.ts (hides button),
+  or keep as-is (employee can create cases). No code change made pending this decision.
 
 Next session should start with:
-  v0.5.0 — schema migrations (dedicated session, ~2 hours):
-    1. Add Hearing model
-    2. Add Invoice, InvoiceLine, Payment, BillingRate models
-    3. Modify File model (caseId optional, add clientId? + invoiceId?)
-    4. Add @@index on AuditLog, WorkLog, Notification, Case, Task
-    5. Add explicit onDelete: Restrict to key relations
-    Run npm run db:push -> npm run db:seed -> verify all pages still work
-  Then: client name validation fix (nameless client bug — still open)
-  Then: common i18n keys (toast/validation keys — blocked on Gate 12/i18n debt)
+  Smoke-test v0.4.5 on staging after Render redeploys. Then v0.5.0 schema migrations
+  (Invoice, InvoiceLine, Payment, BillingRate, Hearing models — all in ROADMAP.md).
 ---

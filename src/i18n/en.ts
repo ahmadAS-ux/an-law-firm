@@ -35,6 +35,7 @@ export const en: Record<string, string> = {
   "login.signIn": "Sign in",
   "login.devMode": "Development mode — Microsoft SSO coming soon",
   "dashboard.title": "Dashboard",
+  "dashboard.hours7d": "Hours (7d)",
   "clients.title": "Clients",
   "cases.title": "Cases",
   "tasks.title": "Tasks",

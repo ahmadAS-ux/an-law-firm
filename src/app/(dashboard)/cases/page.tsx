@@ -28,7 +28,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select-radix";
 import { useI18n } from "@/contexts/language-context";
 import { useAuth } from "@/contexts/auth-provider";
 import { hasPermission } from "@/lib/permissions";
@@ -117,6 +117,7 @@ export default function CasesPage() {
     }
   }
 
+  // TODO: Confirm with Ahmad — UI audit suggests Employee should not see Add Case button despite current permission matrix (createClientCase: true for all roles)
   const canCreate = user ? hasPermission(user.role, "createClientCase") : false;
 
   return (

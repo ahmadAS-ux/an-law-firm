@@ -74,7 +74,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="border-heritage-gold/40">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Hours (7d)</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-400">{t("dashboard.hours7d")}</CardTitle>
             <Clock className="h-4 w-4 text-heritage-gold" />
           </CardHeader>
           <CardContent className="text-3xl font-semibold text-heritage-gold">

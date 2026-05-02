@@ -28,8 +28,9 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 export default function SettingsPage() {
   const { t, lang, setLang } = useI18n();
+  const appEnv = process.env.NEXT_PUBLIC_APP_ENV ?? "staging";
   const env =
-    process.env.NODE_ENV === "production"
+    appEnv === "production"
       ? t("settings.envProduction")
       : t("settings.envStaging");
 
@@ -62,7 +63,7 @@ export default function SettingsPage() {
 
         {/* Section 2 — System Information */}
         <SectionCard title={t("settings.systemInfo")}>
-          <InfoRow label={t("settings.version")} value={<bdi dir="ltr">v0.4.2</bdi>} />
+          <InfoRow label={t("settings.version")} value={<bdi dir="ltr">v0.4.5</bdi>} />
           <InfoRow label={t("settings.environment")} value={env} />
           <InfoRow
             label={t("settings.dbStatus")}

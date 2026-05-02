@@ -89,7 +89,8 @@ const links = [
     href: "/conflict-check",
     key: "nav.conflictCheck",
     icon: GitMerge,
-    guard: null,
+    guard: "role" as const,
+    roles: ["PARTNER", "ADMIN", "MANAGER"] as const,
   },
   {
     href: "/notifications",

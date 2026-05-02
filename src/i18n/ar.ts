@@ -34,6 +34,7 @@ export const ar: Record<string, string> = {
   "login.signIn": "دخول",
   "login.devMode": "وضع التطوير — تسجيل الدخول عبر Microsoft قريباً",
   "dashboard.title": "لوحة التحكم",
+  "dashboard.hours7d": "الساعات (٧ أيام)",
   "clients.title": "العملاء",
   "cases.title": "القضايا",
   "tasks.title": "المهام",

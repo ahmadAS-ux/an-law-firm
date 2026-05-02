@@ -44,6 +44,89 @@
 
 ---
 
+## ✅ Fixed Bugs (v0.4.5)
+
+### BUG-020 — Add Case form blocked by Base UI Select binding
+- **Found by:** v0.4.4 UI/UX staging audit (Antigravity) + Claude Code investigation
+- **Date:** 2026-05-03
+- **Module:** Cases / Add Case dialog
+- **Steps to reproduce:** Open Add Case dialog → select a client → trigger shows raw CUID → form validation fails → no POST sent
+- **Expected:** Client name shown in trigger after selection; form submits successfully
+- **Actual:** Base UI `SelectPrimitive.Value` falls back to rendering the raw `value` (CUID) when portal unmounts on popup close; client-side `!form.clientId` validation sees empty display and blocks submission
+- **Root cause:** `@base-ui/react/select` does not cache item text when portal unmounts; affects all dialogs using the Base UI Select wrapper
+- **Fix:** Created `src/components/ui/select-radix.tsx` using `@radix-ui/react-select` (Radix preserves item text internally); updated Add Case dialog to use new component
+- **Priority:** Critical
+- **Status:** Fixed in v0.4.5
+
+### BUG-021 — Add Task form: Case dropdown shows raw CUID after selection
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Tasks / Add Task dialog
+- **Steps to reproduce:** Open Add Task dialog → select a case → trigger shows raw CUID
+- **Root cause:** Same as BUG-020; additionally, mixed JSX children (`<bdi>` + string + title) in SelectItem worsened the fallback behaviour
+- **Fix:** Updated Add Task dialog to use `select-radix`; added `textValue` prop to case SelectItem for explicit trigger display text
+- **Priority:** High
+- **Status:** Fixed in v0.4.5
+
+### BUG-022 — Settings version hardcoded as v0.4.2
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Settings
+- **Steps to reproduce:** Log in as Partner/Admin → Settings → version shows v0.4.2
+- **Root cause:** Hardcoded string literal never updated through v0.4.3 and v0.4.4 releases
+- **Fix:** Updated `settings/page.tsx` line 65 to `v0.4.5`
+- **Priority:** Medium
+- **Status:** Fixed in v0.4.5
+
+### BUG-023 — Settings environment label always shows "Production" on staging
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Settings
+- **Root cause:** `process.env.NODE_ENV` is always `"production"` on Render regardless of whether the service is staging or production (Next.js requires it for `npm start`)
+- **Fix:** Added `NEXT_PUBLIC_APP_ENV` env var; settings page now reads it (`"production"` shows Production, anything else shows Staging). Ahmad must add `NEXT_PUBLIC_APP_ENV=staging` to Render dashboard env vars manually
+- **Priority:** Medium
+- **Status:** Fixed in v0.4.5 (requires manual Render env var — see instructions)
+
+### BUG-024 — Employee sees Add Case button despite audit recommendation
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Cases
+- **Root cause:** Permissions matrix has `createClientCase: true` for EMPLOYEE role; button is shown to all roles; audit recommends hiding for Employee
+- **Fix:** Button already guarded by `hasPermission` check. Added TODO comment in code pending Ahmad's decision on whether Employee permission matrix should be updated
+- **Priority:** Low (flagged for Ahmad review — see session summary)
+- **Status:** Fixed in v0.4.5 (partial — permission matrix decision pending)
+
+### BUG-025 — Conflict Check visible to Employee in sidebar
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Sidebar
+- **Steps to reproduce:** Log in as Employee → Conflict Check link visible in sidebar
+- **Fix:** Added `guard: "role"` to Conflict Check nav item in `sidebar.tsx`, restricting to PARTNER, ADMIN, MANAGER
+- **Priority:** Medium
+- **Status:** Fixed in v0.4.5
+
+### BUG-026 — Header search fallback redirects to /clients from all non-scoped pages
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Header / Global Search
+- **Steps to reproduce:** From Dashboard, Settings, Calendar, or any non-cases/tasks/clients page → type in header search → redirected to /clients
+- **Root cause:** Unconditional `router.push('/clients?search=...')` fallback in `onSearch`; v0.4.2 fix only scoped three routes
+- **Fix:** Added scoping for `/work-logs`, `/files`, `/users`; replaced fallback with early return for pages without search
+- **Priority:** High
+- **Status:** Fixed in v0.4.5
+
+### BUG-027 — "Hours (7d)" dashboard card label not translated to Arabic
+- **Found by:** v0.4.4 UI/UX staging audit
+- **Date:** 2026-05-03
+- **Module:** Dashboard
+- **Steps to reproduce:** Switch UI to Arabic → dashboard shows "Hours (7d)" in English
+- **Root cause:** Hardcoded English string in `dashboard/page.tsx`; missing `dashboard.hours7d` i18n key
+- **Fix:** Added `dashboard.hours7d` key to `ar.ts` and `en.ts`; updated dashboard to use `t("dashboard.hours7d")`
+- **Priority:** Low
+- **Status:** Fixed in v0.4.5
+
+---
+
 ## ✅ Fixed Bugs
 
 ### BUG-017 — Production crash: DropdownMenuLabel/DropdownMenuGroup Base UI error

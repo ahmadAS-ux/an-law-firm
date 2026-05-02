@@ -117,6 +117,9 @@ NODE_ENV
 NEXTAUTH_SECRET
 NEXTAUTH_URL
 NEXT_TELEMETRY_DISABLED=1
+NEXT_PUBLIC_APP_ENV     # "staging" or "production" — controls the label in Settings page
+                        # Must be set via Render dashboard (NOT in committed files)
+                        # Render sets NODE_ENV=production for all builds, so this is the only way to distinguish environments
 ```
 
 ---

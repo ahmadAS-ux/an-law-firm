@@ -1,8 +1,9 @@
 # A&N LPMS — Roadmap
 
-> **Current Version:** `v0.4.3`
+> **Current Version:** `v0.4.5`
 > **Stage:** Phase 1 — Active Development (Staging on Render.com)
 > **Next Milestone:** `v1.0.0` = Live on Azure with Microsoft SSO
+> **UI Audit Cycle:** v0.4.4 Antigravity audit complete — all 8 confirmed issues fixed in v0.4.5
 
 ---
 

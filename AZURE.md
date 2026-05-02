@@ -1,9 +1,11 @@
 # A&N LPMS — Azure Integration Reference
 
 > **Owner:** Ahmad (Consultant/Developer)
-> **Last updated:** 2026-04-18
+> **Last updated:** 2026-05-03
 > **Status:** Pre-migration — staging on Render.com
 > **Go-live target:** v1.0.0 on Azure App Service
+
+> ⚠️ **Production environment variable:** When deploying to Azure App Service (production), set `NEXT_PUBLIC_APP_ENV=production` in the application settings. This controls the environment label shown on the Settings page. Without it the page defaults to "Staging".
 
 This file is the single source of truth for all Azure and Microsoft 365 integration work.
 Read this before touching any Microsoft-related configuration.

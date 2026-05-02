@@ -28,7 +28,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select-radix";
 import { useI18n } from "@/contexts/language-context";
 import { useAuth } from "@/contexts/auth-provider";
 import { hasPermission } from "@/lib/permissions";
@@ -255,7 +255,7 @@ export default function TasksPage() {
                 <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                 <SelectContent>
                   {cases.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
+                    <SelectItem key={c.id} value={c.id} textValue={`${c.caseNumber} — ${c.title}`}>
                       <bdi dir="ltr">{c.caseNumber}</bdi>
                       {" — "}
                       {c.title}

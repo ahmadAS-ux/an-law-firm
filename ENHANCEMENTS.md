@@ -53,6 +53,13 @@ Copy this template and paste at the top of the relevant section:
 
 ## ✅ Completed Enhancements
 
+### v0.4.5 UI/UX audit fixes — May 2026 — completed
+- **Reported by:** Antigravity staging audit (v0.4.4 cycle)
+- **Date:** 2026-05-03
+- **Module:** Global (Add Case, Add Task, Header, Settings, Sidebar, Dashboard)
+- **Description:** 8 confirmed bugs fixed: Base UI Select replaced with Radix in dialogs (fixes Add Case/Task creation + CUID display), header search fallback fixed, settings version bumped to v0.4.5, environment label decoupled from NODE_ENV, Conflict Check hidden from Employee sidebar, Hours (7d) translated to Arabic
+- **Status:** Done in v0.4.5
+
 ### UI/UX audit fixes from staging review
 - **Reported by:** Automated staging audit (Antigravity)
 - **Date:** 2026-05-01
