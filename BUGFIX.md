@@ -92,9 +92,9 @@
 - **Date:** 2026-05-03
 - **Module:** Cases
 - **Root cause:** Permissions matrix has `createClientCase: true` for EMPLOYEE role; button is shown to all roles; audit recommends hiding for Employee
-- **Fix:** Button already guarded by `hasPermission` check. Added TODO comment in code pending Ahmad's decision on whether Employee permission matrix should be updated
-- **Priority:** Low (flagged for Ahmad review — see session summary)
-- **Status:** Fixed in v0.4.5 (partial — permission matrix decision pending)
+- **Fix:** Set `createClientCase: false` for EMPLOYEE in `permissions.ts`. Button is guarded by `hasPermission` so it auto-hides. Removed TODO comment from `cases/page.tsx`.
+- **Priority:** Low
+- **Status:** Fixed in v0.4.5
 
 ### BUG-025 — Conflict Check visible to Employee in sidebar
 - **Found by:** v0.4.4 UI/UX staging audit

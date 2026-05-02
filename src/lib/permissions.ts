@@ -59,7 +59,7 @@ const matrix: Record<Role, Record<Permission, boolean>> = {
   },
   EMPLOYEE: {
     viewAllClients: false,
-    createClientCase: true,
+    createClientCase: false,
     assignToAnyone: false,
     assignToTeam: false,
     assignToSelf: true,

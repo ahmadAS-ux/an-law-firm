@@ -117,7 +117,6 @@ export default function CasesPage() {
     }
   }
 
-  // TODO: Confirm with Ahmad — UI audit suggests Employee should not see Add Case button despite current permission matrix (createClientCase: true for all roles)
   const canCreate = user ? hasPermission(user.role, "createClientCase") : false;
 
   return (

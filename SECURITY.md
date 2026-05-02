@@ -62,7 +62,8 @@
 | PARTNER has `viewAuditLog: true` | Legal oversight requirement |
 | ADMIN has `manageUsers` + `systemSettings` + `viewAuditLog` | Day-to-day operational owner — same powers as partner for these |
 | MANAGER `assignToTeam: true`, `assignToAnyone: false` | Managers can delegate within their team, not across the whole firm |
-| EMPLOYEE `createClientCase: true`, `viewAllClients: false` | Employees can intake new clients/cases (front-desk style) but only see clients they were assigned to or created |
+| ~~EMPLOYEE `createClientCase: true`~~ → now `false` | **Reversed 2026-05-03** — UI/UX audit recommendation: case creation is a Partner/Admin/Manager responsibility; Employees are read-only on cases |
+| EMPLOYEE `viewAllClients: false` | Employees only see clients they were assigned to or created |
 
 ---
 
@@ -73,6 +74,7 @@
 | 2025 | Cookie-based auth for local dev | Simplify development, replaced with SSO in prod |
 | 2025 | Microsoft Entra ID for production SSO | Already in firm's Microsoft ecosystem |
 | 2025 | Permissions enforced client + server | Client-only = bypassable; server-only = bad UX |
+| 2026-05-03 | `createClientCase` restricted to PARTNER/ADMIN/MANAGER | Reverses v0.4.4 EMPLOYEE intake decision based on UI/UX audit recommendation — case creation is a senior-role responsibility |
 | 2025 | Audit Log on all mutations | Legal requirement — track who changed what |
 
 ---

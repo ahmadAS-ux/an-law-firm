@@ -40,11 +40,10 @@ Manual action required from Ahmad:
   NEXT_PUBLIC_APP_ENV = staging
   Save → Render redeploys automatically. Without this, Settings shows "Production" not "Staging".
 
-Conflicts flagged for Ahmad's review:
-  FIX 6 — Employee Add Case button: permissions matrix has createClientCase: true for EMPLOYEE.
-  UI audit recommends hiding the button. A TODO comment was added in cases/page.tsx.
-  Ahmad must decide: change EMPLOYEE createClientCase to false in permissions.ts (hides button),
-  or keep as-is (employee can create cases). No code change made pending this decision.
+Permissions decision (finalized 2026-05-03):
+  Option A applied — EMPLOYEE createClientCase set to false in permissions.ts.
+  Add Case button is now hidden for Employee. TODO comment removed from cases/page.tsx.
+  SECURITY.md and BUGFIX.md updated to reflect the decision.
 
 Next session should start with:
   Smoke-test v0.4.5 on staging after Render redeploys. Then v0.5.0 schema migrations
