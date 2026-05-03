@@ -21,7 +21,7 @@ export const en: Record<string, string> = {
   "common.delete": "Delete",
   "common.edit": "Edit",
   "common.add": "Add",
-  "common.search": "Search",
+  "common.search": "Search...",
   "common.filter": "Filter",
   "common.loading": "Loading…",
   "common.noData": "No data",

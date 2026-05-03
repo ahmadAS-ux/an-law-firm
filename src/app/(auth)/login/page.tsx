@@ -17,7 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select-radix";
 import { useAuth } from "@/contexts/auth-provider";
 import { useI18n } from "@/contexts/language-context";
 import { LTR, BidiStr } from "@/components/bidi";

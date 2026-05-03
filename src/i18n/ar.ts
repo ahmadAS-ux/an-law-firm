@@ -20,7 +20,7 @@ export const ar: Record<string, string> = {
   "common.delete": "حذف",
   "common.edit": "تعديل",
   "common.add": "إضافة",
-  "common.search": "بحث",
+  "common.search": "بحث...",
   "common.filter": "تصفية",
   "common.loading": "جاري التحميل…",
   "common.noData": "لا توجد بيانات",
