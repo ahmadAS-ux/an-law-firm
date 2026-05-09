@@ -59,10 +59,17 @@ export async function POST(request: Request) {
   const clientId = String(body.clientId ?? "");
   const caseId = String(body.caseId ?? "");
   const workTypeId = String(body.workTypeId ?? "");
-  const hours = Number(body.hours ?? 0);
+  const hoursRaw = Number(body.hours ?? 0);
+  const hours = Math.round(hoursRaw * 10) / 10;
   if (!clientId || !caseId || !workTypeId || !hours) {
     return NextResponse.json(
       { error: "clientId, caseId, workTypeId, hours required" },
+      { status: 400 },
+    );
+  }
+  if (hours <= 0 || hours > 24 || Math.round(hours * 10) !== hours * 10) {
+    return NextResponse.json(
+      { error: "hours must be a positive multiple of 0.1, max 24" },
       { status: 400 },
     );
   }

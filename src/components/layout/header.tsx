@@ -3,8 +3,8 @@
 import * as React from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, Search } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { Menu, Moon, Search, Sun } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const pathTitles: Record<string, string> = {
   "/": "nav.dashboard",
@@ -39,6 +40,7 @@ const pathTitles: Record<string, string> = {
   "/notifications": "nav.notifications",
   "/users": "nav.users",
   "/settings": "nav.settings",
+  "/matters": "nav.matters",
 };
 
 function BrandLogo() {
@@ -74,6 +76,7 @@ export function AppHeader() {
           ? "nav.tasks"
           : "nav.dashboard");
 
+  const { theme, setTheme } = useTheme();
   const [q, setQ] = React.useState("");
 
   function onSearch(e: React.FormEvent) {
@@ -90,7 +93,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-heritage-gold/20 bg-[#1f1f1f]/95 px-3 backdrop-blur md:px-6">
+    <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-heritage-gold/20 bg-background/95 px-3 backdrop-blur md:px-6">
       <Sheet>
         <SheetTrigger
           className={cn(
@@ -102,7 +105,7 @@ export function AppHeader() {
         </SheetTrigger>
         <SheetContent
           side="right"
-          className="w-72 border-heritage-gold/20 bg-near-black p-0"
+          className="w-72 border-heritage-gold/20 bg-sidebar p-0"
         >
           <div className="flex h-14 items-center border-b border-heritage-gold/20 px-4">
             <BrandLogo />
@@ -113,7 +116,7 @@ export function AppHeader() {
         </SheetContent>
       </Sheet>
 
-      <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-white">
+      <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-foreground">
         {t(titleKey)}
       </h1>
 
@@ -129,6 +132,14 @@ export function AppHeader() {
         </div>
       </form>
 
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+      >
+        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </Button>
       <LanguageSwitcher compact />
       <NotificationBell />
 

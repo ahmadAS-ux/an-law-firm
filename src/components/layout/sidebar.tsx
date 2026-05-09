@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Users,
   Briefcase,
+  FileText,
   ListTodo,
   Clock,
   Calendar,
@@ -60,6 +61,7 @@ const links = [
   { href: "/", key: "nav.dashboard", icon: LayoutDashboard, guard: null },
   { href: "/clients", key: "nav.clients", icon: Users, guard: null },
   { href: "/cases", key: "nav.cases", icon: Briefcase, guard: null },
+  { href: "/matters", key: "nav.matters", icon: FileText, guard: null },
   { href: "/tasks", key: "nav.tasks", icon: ListTodo, guard: null },
   { href: "/work-logs", key: "nav.workLogs", icon: Clock, guard: null },
   { href: "/calendar", key: "nav.calendar", icon: Calendar, guard: null },
@@ -132,7 +134,7 @@ function NavLink({
         "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
         active
           ? "bg-heritage-gold/15 text-heritage-gold"
-          : "text-muted-foreground hover:bg-white/5 hover:text-white",
+          : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
@@ -189,7 +191,7 @@ export function AppSidebar() {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-e border-heritage-gold/20 bg-[#141414] md:flex">
+    <aside className="hidden w-60 shrink-0 flex-col border-e border-heritage-gold/20 bg-sidebar md:flex">
       <div className="flex h-14 items-center justify-center border-b border-heritage-gold/20 px-3">
         <BrandLogo size="sidebar" />
       </div>
@@ -198,13 +200,13 @@ export function AppSidebar() {
       </div>
       <div className="space-y-2 border-t border-heritage-gold/20 p-3">
         <div className="text-xs">
-          <div className="truncate font-medium text-white">{user?.name}</div>
-          <div className="text-gray-400">{user?.role}</div>
+          <div className="truncate font-medium text-sidebar-foreground">{user?.name}</div>
+          <div className="text-muted-foreground">{user?.role}</div>
         </div>
         <LanguageSwitcher />
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 text-gray-400 hover:bg-white/5 hover:text-white"
+          className="w-full justify-start gap-2 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           onClick={() => void logout()}
         >
           <LogOut className="h-4 w-4" />

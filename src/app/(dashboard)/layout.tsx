@@ -21,7 +21,7 @@ export default function DashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-near-black p-8">
+      <div className="flex min-h-screen items-center justify-center bg-background p-8">
         <div className="w-full max-w-md space-y-3">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-40 w-full" />
@@ -33,7 +33,7 @@ export default function DashboardLayout({
   if (!user) return null;
 
   return (
-    <div className="flex min-h-screen flex-row bg-near-black">
+    <div className="flex min-h-screen flex-row bg-background">
       <AppSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <AppHeader />

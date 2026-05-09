@@ -32,12 +32,12 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={cn("dark", tajawal.variable, dmSans.variable)}
+      className={cn(tajawal.variable, dmSans.variable)}
       suppressHydrationWarning
     >
       <body
         className={cn(
-          "min-h-screen bg-near-black font-arabic text-foreground antialiased",
+          "min-h-screen bg-background font-arabic text-foreground antialiased",
         )}
       >
         <Providers>{children}</Providers>

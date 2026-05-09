@@ -63,7 +63,7 @@ export default function WorkLogsEntryPage() {
         clientId,
         caseId,
         workTypeId,
-        hours: parseFloat(hours),
+        hours: Math.round(parseFloat(hours) * 10) / 10,
         isBillable: billable,
         date,
         notes,
@@ -152,8 +152,8 @@ export default function WorkLogsEntryPage() {
           <Label>{t("workLog.hours")}</Label>
           <Input
             type="number"
-            step="0.25"
-            min="0.25"
+            step="0.1"
+            min="0.1"
             max="24"
             value={hours}
             onChange={(e) => setHours(e.target.value)}

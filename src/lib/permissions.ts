@@ -16,7 +16,9 @@ export type Permission =
   | "viewBilling"
   | "systemSettings"
   | "viewAuditLog"
-  | "manageFiles";
+  | "manageFiles"
+  | "editApprovedMatter"
+  | "deleteMatter";
 
 const matrix: Record<Role, Record<Permission, boolean>> = {
   PARTNER: {
@@ -32,6 +34,8 @@ const matrix: Record<Role, Record<Permission, boolean>> = {
     systemSettings: true,
     viewAuditLog: true,
     manageFiles: true,
+    editApprovedMatter: true,
+    deleteMatter: true,
   },
   ADMIN: {
     viewAllClients: true,
@@ -46,6 +50,8 @@ const matrix: Record<Role, Record<Permission, boolean>> = {
     systemSettings: true,
     viewAuditLog: true,
     manageFiles: true,
+    editApprovedMatter: true,
+    deleteMatter: true,
   },
   MANAGER: {
     viewAllClients: true,
@@ -60,6 +66,8 @@ const matrix: Record<Role, Record<Permission, boolean>> = {
     systemSettings: false,
     viewAuditLog: false,
     manageFiles: true,
+    editApprovedMatter: false,
+    deleteMatter: false,
   },
   EMPLOYEE: {
     viewAllClients: false,
@@ -74,6 +82,8 @@ const matrix: Record<Role, Record<Permission, boolean>> = {
     systemSettings: false,
     viewAuditLog: false,
     manageFiles: false,
+    editApprovedMatter: false,
+    deleteMatter: false,
   },
 };
 
