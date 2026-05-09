@@ -15,7 +15,10 @@
     "db:seed": "node node_modules/tsx/dist/cli.mjs prisma/seed.ts",
     "db:studio": "node node_modules/prisma/build/index.js studio",
     "render-build": "node node_modules/prisma/build/index.js generate && node node_modules/prisma/build/index.js db push && node node_modules/tsx/dist/cli.mjs prisma/seed.ts && node node_modules/next/dist/bin/next build",
-    "next": "node node_modules/next/dist/bin/next"
+    "next": "node node_modules/next/dist/bin/next",
+    "test": "node node_modules/vitest/vitest.mjs",
+    "test:ui": "node node_modules/vitest/vitest.mjs --ui",
+    "test:run": "node node_modules/vitest/vitest.mjs run"
   },
   "prisma": {
     "seed": "node node_modules/tsx/dist/cli.mjs prisma/seed.ts"
@@ -49,13 +52,18 @@
     "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20.19.39",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitest/ui": "^4.1.5",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
+    "jsdom": "^29.1.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }

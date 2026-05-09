@@ -1,51 +1,57 @@
----
-SESSION SUMMARY — v0.4.5
-Date: 2026-05-03
+# SESSION SUMMARY — v0.5.0 (Mega-Session)
 
-What was done:
-  Fixed all 8 confirmed bugs from the v0.4.4 Antigravity UI/UX staging audit.
-  The root cause of Add Case/Add Task failures was @base-ui/react/select not preserving item
-  text when its portal unmounts — SelectValue fell back to raw CUIDs, breaking both display
-  and form validation before any POST reached the server. Fixed by creating select-radix.tsx
-  (Radix/shadcn Select) and replacing Base UI Select in both dialogs. Also fixed header search
-  fallback (no longer redirects to /clients from unscoped pages), settings version (v0.4.5),
-  environment label (now uses NEXT_PUBLIC_APP_ENV instead of NODE_ENV), Conflict Check sidebar
-  visibility (hidden from Employee), and Hours (7d) Arabic translation.
+Date: 2026-05-09
 
-Files changed:
-  - src/components/ui/select-radix.tsx (NEW — Radix Select wrapper)
-  - src/app/(dashboard)/cases/page.tsx
-  - src/app/(dashboard)/tasks/page.tsx
-  - src/components/layout/header.tsx
-  - src/app/(dashboard)/settings/page.tsx
-  - src/components/layout/sidebar.tsx
-  - src/app/(dashboard)/page.tsx
-  - src/i18n/ar.ts
-  - src/i18n/en.ts
-  - .env.example
-  - CLAUDE.md
-  - AZURE.md
-  - BUGFIX.md
-  - ENHANCEMENTS.md
-  - ROADMAP.md
+## Commits
 
-Decisions made:
-  - select-radix.tsx is now the required Select for any dialog that binds CUIDs as values.
-    Existing select.tsx (Base UI) stays for non-dialog usage; full migration planned for v0.5.x.
-  - Radix SelectItem with JSX children must include textValue="..." for correct trigger display.
-  - Environment discrimination: always use NEXT_PUBLIC_APP_ENV, not NODE_ENV, for UI labels.
+| Phase | Hash | Description |
+|-------|------|-------------|
+| Phase 1 | fe3af0c | schema: departments, roles, permissions, matters, hearings, invoices |
+| Phase 2 | b5bc806 | auth refactor + permissions UI + departments UI |
+| Phase 3 | bcf7b8d | light theme, Matters module, decimal billing |
+| Phase 4 | *(this commit)* | vitest setup + permission tests + docs |
 
-Manual action required from Ahmad:
-  ⚠️ Render dashboard → an-law-firm service → Environment → Add variable:
-  NEXT_PUBLIC_APP_ENV = staging
-  Save → Render redeploys automatically. Without this, Settings shows "Production" not "Staging".
+## What was done
 
-Permissions decision (finalized 2026-05-03):
-  Option A applied — EMPLOYEE createClientCase set to false in permissions.ts.
-  Add Case button is now hidden for Employee. TODO comment removed from cases/page.tsx.
-  SECURITY.md and BUGFIX.md updated to reflect the decision.
+Four sequential phases executed from the V0.5.0_MEGA_PROMPT spec:
 
-Next session should start with:
-  Smoke-test v0.4.5 on staging after Render redeploys. Then v0.5.0 schema migrations
-  (Invoice, InvoiceLine, Payment, BillingRate, Hearing models — all in ROADMAP.md).
----
+1. **Schema foundation** — Added Department, Role, Permission, RolePermission, Matter (with MatterStatus enum), Hearing, BillingRate, Invoice, InvoiceLine, Payment models to Prisma schema. Updated User with roleId, departmentId, soft-delete, and new relations. Updated seed with 6 roles, 26 permissions, and the Dr. Nawaf permission matrix.
+
+2. **Auth refactor + permissions UI** — Extended `permissions.ts` with async `hasPermissionDb` (scope-aware: ALL/OWN_DEPARTMENT/OWN/PARTIAL). Added Settings > Permissions page (matrix editor with lock protection and audit log on save). Added Settings > Departments CRUD with soft delete. Extended i18n with 40+ new keys for permissions and roles.
+
+3. **Light theme + Matters module + decimal billing** — Switched default theme from dark to light (#FAFAFA). Added theme toggle (Sun/Moon) in header. Fixed all hard-coded dark colors in sidebar, header, and layout to use CSS variables. Created /matters page with PENDING_APPROVAL → ACTIVE approval workflow (visible to PARTNER and own-department MANAGER). Created /api/matters (GET/POST) and /api/matters/[id] (GET/PATCH/DELETE with soft delete). Changed work-log hours from 0.25-step to 0.1-step with client and server-side rounding.
+
+4. **Vitest + tests + docs** — Installed Vitest 4.1.5. Created 20 unit tests: permissions.test.ts (hasPermission legacy matrix, hasPermissionDb with mocked Prisma) and api-permissions.test.ts (checkApiPermission 401/403/pass, requireUser 401/pass). All 20 tests pass. Updated ROADMAP.md, SECURITY.md, CLAUDE.md with v0.5.0 context.
+
+## Files changed
+
+~30 files across prisma/, src/app/api/, src/app/(dashboard)/, src/components/, src/lib/, src/i18n/
+
+## Key decisions made
+
+- Modified Dr. Nawaf model: PARTNER all permissions locked ON; SYSTEM_ADMIN technical perms locked; others editable
+- Database-driven permissions matrix editable from Settings UI; locked cells return 400
+- Light theme as default (#FAFAFA) — dark theme still available via toggle
+- Case (litigation) + Matter (corporate) terminology split — Matters have PENDING_APPROVAL → ACTIVE workflow
+- Legacy `hasPermission` sync function kept for backward compat (~40 callers); `hasPermissionDb` added for new code
+- Decimal billing: 0.1h minimum, client and server both round to nearest 0.1
+- Soft delete on all new entities (deletedAt field)
+- `editApprovedMatter` and `deleteMatter` added to legacy Permission type for new matter routes
+
+## TODOs flagged for Ahmad
+
+- [ ] Smoke-test on staging (Render) — verify light theme renders correctly, permission editor works, Matter creation flow
+- [ ] Confirm prisma db push + prisma/seed.ts runs on Render (seed must populate 6 roles + 26 permissions)
+- [ ] Role roleId migration: existing users in staging DB need roleId assigned (seed.ts migrates them, verify it ran)
+- [ ] Review Dr. Nawaf permission matrix — confirm locked permissions match firm policy
+- [ ] TESTING.md file appears in working tree — check and delete if not needed
+
+## Manual actions required
+
+1. Run `npm run db:seed` on staging after deploy to populate Role/Permission/RolePermission tables
+2. Smoke-test light theme, theme toggle, Matters page, permission matrix editor
+3. Confirm Dr. Nawaf received notification of v0.5.0 changes
+
+## Next session
+
+v0.6.0 — Time entry approval workflow + 2FA (TOTP) + glass-break emergency override model

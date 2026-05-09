@@ -53,6 +53,21 @@
 
 ---
 
+## Database-Driven Permissions (v0.5.0+)
+
+As of v0.5.0, permissions are stored in the database (Role, Permission, RolePermission tables) and editable from Settings > Permissions.
+
+| Rule | Detail |
+|------|--------|
+| Modified Dr. Nawaf model | PARTNER: all permissions locked ON. SYSTEM_ADMIN: technical permissions locked, matter permissions editable. Other roles: fully editable. |
+| Locked permissions | `isLocked=true` on RolePermission — these rows are rejected with 400 by the matrix PATCH API. Cannot be changed via UI. |
+| Audit capture | All permission changes write to AuditLog (category: "permissions") with before/after diff. |
+| Glass-break model | NOT implemented in v0.5.0 — deferred to v0.6.0. |
+| Legacy sync matrix | `hasPermission(role, permission)` remains for backward compat with 40+ existing callers. Will be removed in v0.6.0 when roleId migration completes. |
+| `hasPermissionDb` | New async function for new code. Checks DB RolePermission with scope awareness (ALL / OWN_DEPARTMENT / OWN / PARTIAL). |
+
+---
+
 ## Permissions Matrix Decisions
 
 | Decision | Reasoning |

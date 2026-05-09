@@ -1,9 +1,11 @@
 # A&N LPMS — Roadmap
 
-> **Current Version:** `v0.4.5`
+> **Current Version:** `v0.5.0`
 > **Stage:** Phase 1 — Active Development (Staging on Render.com)
 > **Next Milestone:** `v1.0.0` = Live on Azure with Microsoft SSO
 > **UI Audit Cycle:** v0.4.4 Antigravity audit complete — all 8 confirmed issues fixed in v0.4.5
+>
+> **v0.5.0 complete** — Schema foundation (departments, roles, permissions, matters, hearings, invoices), DB-driven permissions matrix UI, department management UI, light theme as default, Matters module with approval workflow, decimal billing (0.1h steps), Vitest setup with 20 passing tests.
 
 ---
 
@@ -59,9 +61,20 @@ Examples:
 
 ---
 
+## ✅ v0.5.0 — Foundation Mega-Session (complete)
+
+| Phase | What shipped |
+|-------|-------------|
+| Phase 1 | Schema: Department, Role, Permission, RolePermission, Matter, Hearing, BillingRate, Invoice, InvoiceLine, Payment; seed with 6 roles + 26 permissions + Dr. Nawaf permission matrix |
+| Phase 2 | DB-driven permissions matrix UI (Settings > Permissions), Department management (Settings > Departments), async `hasPermissionDb`, audit log category field |
+| Phase 3 | Light theme as default, theme toggle in header, Matters module + PENDING_APPROVAL→ACTIVE workflow, /api/matters, decimal billing (0.1h), soft-delete on matters |
+| Phase 4 | Vitest setup, 20 unit tests (hasPermission, hasPermissionDb, checkApiPermission, requireUser) |
+
+---
+
 ## Schema Migrations Required Before Phase 2
 
-> Migration session target: v0.5.0 (one dedicated session)
+> Migration session target: v0.5.0 (one dedicated session) ← **COMPLETE — see above**
 > Estimated time: 2 hours including local testing
 > These must land before the Invoicing module can be built.
 

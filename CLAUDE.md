@@ -53,6 +53,9 @@
 - **shadcn/ui** (Slate, CSS variables)
 - **Auth (dev):** HTTP-only cookie `an-auth` — use `getCurrentUser()` / `useAuth()` only
 - **Auth (production):** Microsoft SSO / Entra ID
+- **Roles (v0.5.0+):** 6 roles: PARTNER, SYSTEM_ADMIN, DEPARTMENT_MANAGER, EMPLOYEE, ADMIN_STAFF, ACCOUNTANT. Legacy 4-role string kept for backward compat — use `roleId` for new code.
+- **Permissions (v0.5.0+):** Database-driven via Role/Permission/RolePermission tables. Use `hasPermissionDb()` for new code. Legacy `hasPermission(role, perm)` still works. Settings > Permissions provides UI matrix editor.
+- **Default theme:** Light (`#FAFAFA` background). Dark theme available via toggle in header.
 
 ---
 
