@@ -21,7 +21,7 @@ export async function GET(_request: Request, ctx: Ctx) {
   if (!f) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (user.role === "EMPLOYEE" && f.case.assignedToId !== user.id) {
+  if (user.role === "EMPLOYEE" && f.case && f.case.assignedToId !== user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   return NextResponse.json({ file: f });
