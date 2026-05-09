@@ -36,7 +36,7 @@ export default function SettingsPage() {
 
   return (
     <RoleGuard roles={["PARTNER", "ADMIN"]}>
-      <div className="max-w-2xl space-y-6">
+      <div className="max-w-2xl space-y-6" style={{ marginTop: 0 }}>
         {/* Section 1 — Firm Information */}
         <SectionCard title={t("settings.firmInfo")}>
           <InfoRow
@@ -63,7 +63,7 @@ export default function SettingsPage() {
 
         {/* Section 2 — System Information */}
         <SectionCard title={t("settings.systemInfo")}>
-          <InfoRow label={t("settings.version")} value={<bdi dir="ltr">v0.4.5</bdi>} />
+          <InfoRow label={t("settings.version")} value={<bdi dir="ltr">v0.5.0</bdi>} />
           <InfoRow label={t("settings.environment")} value={env} />
           <InfoRow
             label={t("settings.dbStatus")}

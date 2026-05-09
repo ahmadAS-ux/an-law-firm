@@ -6,8 +6,17 @@ export async function createAuditLog(
   entityType: string,
   entityId: string,
   details?: unknown,
-  ipAddress?: string | null,
+  ipAddressOrCategory?: string | null,
+  category?: string | null,
 ) {
+  // Support both old callers (6 args, ipAddress) and new callers (7 args with category)
+  const ipAddress = typeof ipAddressOrCategory === "string" && !["AUTH","MATTER","BILLING","PERMISSION","SYSTEM"].includes(ipAddressOrCategory)
+    ? ipAddressOrCategory
+    : null;
+  const resolvedCategory = ["AUTH","MATTER","BILLING","PERMISSION","SYSTEM"].includes(ipAddressOrCategory ?? "")
+    ? (ipAddressOrCategory as string)
+    : (category ?? null);
+
   await prisma.auditLog.create({
     data: {
       userId,
@@ -15,7 +24,8 @@ export async function createAuditLog(
       entityType,
       entityId,
       details: details !== undefined ? JSON.stringify(details) : null,
-      ipAddress: ipAddress ?? null,
+      ipAddress,
+      category: resolvedCategory,
     },
   });
 }
