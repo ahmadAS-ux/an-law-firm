@@ -30,6 +30,9 @@ const PERMISSIONS = [
   { key: "viewClientConfidential",category: "matter",  description: "View confidential client info",  descriptionAr: "عرض معلومات العميل السرية" },
   { key: "viewAuditLog",          category: "system",  description: "View audit log",                 descriptionAr: "عرض سجل التدقيق" },
   { key: "editPermissions",       category: "system",  description: "Edit permissions matrix",        descriptionAr: "تعديل مصفوفة الصلاحيات" },
+  { key: "viewOwnReports",        category: "reports", description: "View own time and performance reports",         descriptionAr: "عرض التقارير الشخصية" },
+  { key: "viewDepartmentReports", category: "reports", description: "View reports for own department employees",     descriptionAr: "عرض تقارير موظفي القسم" },
+  { key: "viewAllReports",        category: "reports", description: "View firm-wide reports across all departments", descriptionAr: "عرض تقارير الشركة الكاملة" },
 ];
 
 type PermGrant = {
@@ -72,6 +75,9 @@ const ROLE_MATRIX: Record<string, Record<string, PermGrant>> = {
     viewClientConfidential:{ granted: false, isLocked: true, lockedDirection: "OFF" },
     viewAuditLog:          { granted: true, scope: "ALL", isLocked: true, lockedDirection: "ON" },
     editPermissions:       { granted: true, scope: "ALL", isLocked: true, lockedDirection: "ON" },
+    viewOwnReports:        { granted: false, isLocked: true, lockedDirection: "OFF" },
+    viewDepartmentReports: { granted: false, isLocked: true, lockedDirection: "OFF" },
+    viewAllReports:        { granted: false, isLocked: true, lockedDirection: "OFF" },
   },
 
   DEPARTMENT_MANAGER: {
@@ -101,6 +107,9 @@ const ROLE_MATRIX: Record<string, Record<string, PermGrant>> = {
     viewClientConfidential:{ granted: false },
     viewAuditLog:          { granted: false },
     editPermissions:       { granted: false },
+    viewOwnReports:        { granted: true, scope: "OWN" },
+    viewDepartmentReports: { granted: true, scope: "OWN_DEPARTMENT" },
+    viewAllReports:        { granted: false },
   },
 
   EMPLOYEE: {
@@ -130,6 +139,9 @@ const ROLE_MATRIX: Record<string, Record<string, PermGrant>> = {
     viewClientConfidential:{ granted: false },
     viewAuditLog:          { granted: false },
     editPermissions:       { granted: false },
+    viewOwnReports:        { granted: true, scope: "OWN" },
+    viewDepartmentReports: { granted: false },
+    viewAllReports:        { granted: false },
   },
 
   ADMIN_STAFF: {
@@ -159,6 +171,9 @@ const ROLE_MATRIX: Record<string, Record<string, PermGrant>> = {
     viewClientConfidential:{ granted: false },
     viewAuditLog:          { granted: false },
     editPermissions:       { granted: false },
+    viewOwnReports:        { granted: false },
+    viewDepartmentReports: { granted: false },
+    viewAllReports:        { granted: false },
   },
 
   ACCOUNTANT: {
@@ -188,6 +203,9 @@ const ROLE_MATRIX: Record<string, Record<string, PermGrant>> = {
     viewClientConfidential:{ granted: false },
     viewAuditLog:          { granted: false },
     editPermissions:       { granted: false },
+    viewOwnReports:        { granted: true, scope: "OWN" },
+    viewDepartmentReports: { granted: false, isLocked: true, lockedDirection: "OFF" },
+    viewAllReports:        { granted: false, isLocked: true, lockedDirection: "OFF" },
   },
 };
 
@@ -260,7 +278,14 @@ async function main() {
     }
   }
 
-  // ── 5. Migrate existing users to DB roles ─────────────────────────────────────
+  // ── 5. ReportConfig singleton ────────────────────────────────────────────────
+  await prisma.reportConfig.upsert({
+    where: { id: "default" },
+    create: { id: "default" },
+    update: {},
+  });
+
+  // ── 6. Migrate existing users to DB roles ─────────────────────────────────────
   const legacyMapping: Record<string, string> = {
     PARTNER:  "PARTNER",
     ADMIN:    "SYSTEM_ADMIN",

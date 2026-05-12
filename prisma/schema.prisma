@@ -153,6 +153,7 @@ model Matter {
   @@index([assignedToId])
   @@index([status])
   @@index([deletedAt])
+  @@index([assignedToId, status, deletedAt])
 }
 
 enum HearingType {
@@ -322,6 +323,8 @@ model Case {
   @@index([assignedToId, status])
   @@index([departmentId])
   @@index([deletedAt])
+  @@index([assignedToId, status, deletedAt])
+  @@index([closeDate, assignedToId])
 }
 
 model Client {
@@ -374,6 +377,8 @@ model Task {
   updatedAt     DateTime  @updatedAt
 
   @@index([assignedToId, status])
+  @@index([assignedToId, status, dueDate])
+  @@index([assignedToId, completedAt])
 }
 
 model WorkType {
@@ -424,6 +429,10 @@ model WorkLog {
   @@index([matterId])
   @@index([date])
   @@index([deletedAt])
+  @@index([userId, date])
+  @@index([userId, date, isBillable])
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }
 
 model File {
@@ -490,4 +499,18 @@ model ConflictCheck {
   performedById String
   performedBy   User     @relation(fields: [performedById], references: [id])
   createdAt     DateTime @default(now())
+}
+
+// Singleton — always upserted with id = "default"
+model ReportConfig {
+  id                     String   @id @default("default")
+  workweekDays           Int[]    @default([0, 1, 2, 3, 4])
+  standardHoursPerDay    Decimal  @default(8.0)  @db.Decimal(3, 1)
+  targetHoursPartner     Decimal  @default(100.0) @db.Decimal(5, 1)
+  targetHoursManager     Decimal  @default(120.0) @db.Decimal(5, 1)
+  targetHoursEmployee    Decimal  @default(140.0) @db.Decimal(5, 1)
+  targetHoursAdminStaff  Decimal  @default(0.0)  @db.Decimal(5, 1)
+  targetHoursAccountant  Decimal  @default(0.0)  @db.Decimal(5, 1)
+  lateEntryThresholdDays Int      @default(2)
+  updatedAt              DateTime @updatedAt
 }
