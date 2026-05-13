@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/auth-provider";
 import { useI18n } from "@/contexts/language-context";
 import { hasPermission } from "@/lib/permissions";
@@ -149,13 +150,13 @@ function StatCard({
   gold?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-heritage-gold/20 bg-[#252525] p-4">
-      <div className="flex items-center gap-2 text-sm text-gray-400">
+    <div className="flex flex-col gap-2 rounded-lg border border-heritage-gold/20 bg-card p-4">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Icon className="h-4 w-4" />
         {label}
       </div>
       <div
-        className={`text-2xl font-bold ${gold ? "text-heritage-gold" : "text-white"}`}
+        className={`text-2xl font-bold ${gold ? "text-heritage-gold" : "text-foreground"}`}
       >
         {value}
       </div>
@@ -168,6 +169,8 @@ export default function HrReportsPage() {
   const { user, isLoading } = useAuth();
   const { t, lang } = useI18n();
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   // Redirect employees
   React.useEffect(() => {
@@ -281,7 +284,7 @@ export default function HrReportsPage() {
     <div className="flex flex-col gap-6 p-1">
       {/* ── Title + Export ───────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-white">{t("hrReports.title")}</h1>
+        <h1 className="text-xl font-bold text-foreground">{t("hrReports.title")}</h1>
         <div className="flex gap-2">
           <Button
             size="sm"
@@ -305,7 +308,7 @@ export default function HrReportsPage() {
       </div>
 
       {/* ── Filters ─────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-3 rounded-lg border border-heritage-gold/20 bg-[#252525] p-4">
+      <div className="flex flex-wrap gap-3 rounded-lg border border-heritage-gold/20 bg-card p-4">
         {/* Quick range buttons */}
         <div className="flex gap-1.5">
           {(["week", "month", "custom"] as const).map((mode) => (
@@ -315,7 +318,7 @@ export default function HrReportsPage() {
               className={`rounded px-3 py-1.5 text-sm transition-colors ${
                 quickRange === mode
                   ? "bg-heritage-gold text-near-black font-medium"
-                  : "border border-heritage-gold/30 text-gray-300 hover:border-heritage-gold/60"
+                  : "border border-heritage-gold/30 text-foreground hover:border-heritage-gold/60"
               }`}
             >
               {t(`hr.${mode === "week" ? "thisWeek" : mode === "month" ? "thisMonth" : "custom"}`)}
@@ -325,26 +328,26 @@ export default function HrReportsPage() {
 
         {/* Date inputs */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400">{t("hr.filterFrom")}</span>
+          <span className="text-sm text-muted-foreground">{t("hr.filterFrom")}</span>
           <input
             type="date"
             value={from}
             onChange={(e) => { setFrom(e.target.value); setQuickRange("custom"); }}
-            className="rounded border border-heritage-gold/30 bg-near-black px-2 py-1 text-sm text-white focus:outline-none focus:ring-1 focus:ring-heritage-gold/50"
+            className="rounded border border-heritage-gold/30 bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-heritage-gold/50"
           />
-          <span className="text-sm text-gray-400">{t("hr.filterTo")}</span>
+          <span className="text-sm text-muted-foreground">{t("hr.filterTo")}</span>
           <input
             type="date"
             value={to}
             onChange={(e) => { setTo(e.target.value); setQuickRange("custom"); }}
-            className="rounded border border-heritage-gold/30 bg-near-black px-2 py-1 text-sm text-white focus:outline-none focus:ring-1 focus:ring-heritage-gold/50"
+            className="rounded border border-heritage-gold/30 bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-heritage-gold/50"
           />
         </div>
 
         {/* Employee filter — partners/admins only */}
         {isPartnerOrAdmin && (
           <Select value={employeeId} onValueChange={(v) => setEmployeeId(v ?? "all")}>
-            <SelectTrigger className="w-48 border-heritage-gold/30 bg-near-black text-white">
+            <SelectTrigger className="w-48 border-heritage-gold/30 bg-background text-foreground">
               <SelectValue placeholder={t("hr.filterAllEmployees")} />
             </SelectTrigger>
             <SelectContent>
@@ -360,7 +363,7 @@ export default function HrReportsPage() {
 
         {/* Billable filter */}
         <Select value={billableFilter} onValueChange={(v) => setBillableFilter(v ?? "all")}>
-          <SelectTrigger className="w-44 border-heritage-gold/30 bg-near-black text-white">
+          <SelectTrigger className="w-44 border-heritage-gold/30 bg-background text-foreground">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -410,40 +413,40 @@ export default function HrReportsPage() {
 
       {/* ── Bar chart ────────────────────────────────────────────────── */}
       {rows.length > 0 && (
-        <div className="rounded-lg border border-heritage-gold/20 bg-[#252525] p-4">
-          <p className="mb-4 text-sm font-medium text-gray-300">{t("hr.hoursChart")}</p>
+        <div className="rounded-lg border border-heritage-gold/20 bg-card p-4">
+          <p className="mb-4 text-sm font-medium text-muted-foreground">{t("hr.hoursChart")}</p>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#333" : "#e5e7eb"} />
               <XAxis
                 dataKey="name"
-                tick={{ fill: "#ccc", fontSize: 12 }}
-                axisLine={{ stroke: "#555" }}
+                tick={{ fill: isDark ? "#ccc" : "#374151", fontSize: 12 }}
+                axisLine={{ stroke: isDark ? "#555" : "#9ca3af" }}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: "#ccc", fontSize: 12 }}
-                axisLine={{ stroke: "#555" }}
+                tick={{ fill: isDark ? "#ccc" : "#374151", fontSize: 12 }}
+                axisLine={{ stroke: isDark ? "#555" : "#9ca3af" }}
                 tickLine={false}
                 unit="h"
               />
               <Tooltip
-                contentStyle={{ background: "#1A1A1A", border: "1px solid #B8963E44", borderRadius: 6 }}
-                labelStyle={{ color: "#fff" }}
-                itemStyle={{ color: "#ccc" }}
+                contentStyle={{ background: isDark ? "#1A1A1A" : "#ffffff", border: "1px solid #B8963E44", borderRadius: 6 }}
+                labelStyle={{ color: isDark ? "#fff" : "#1A1A1A" }}
+                itemStyle={{ color: isDark ? "#ccc" : "#374151" }}
               />
-              <Legend wrapperStyle={{ color: "#ccc", fontSize: 13 }} />
+              <Legend wrapperStyle={{ color: isDark ? "#ccc" : "#374151", fontSize: 13 }} />
               <Bar dataKey={t("hr.billableHours")} stackId="a" fill="#B8963E" radius={[0, 0, 0, 0]} />
-              <Bar dataKey={t("hr.nonBillableHours")} stackId="a" fill="#3D3D3D" radius={[4, 4, 0, 0]} />
+              <Bar dataKey={t("hr.nonBillableHours")} stackId="a" fill={isDark ? "#3D3D3D" : "#d1d5db"} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       )}
 
       {/* ── Employee table ───────────────────────────────────────────── */}
-      <div className="rounded-lg border border-heritage-gold/20 bg-[#252525] overflow-x-auto">
+      <div className="rounded-lg border border-heritage-gold/20 bg-card overflow-x-auto">
         {rows.length === 0 && !fetching ? (
-          <p className="p-8 text-center text-gray-500">{t("hr.noData")}</p>
+          <p className="p-8 text-center text-muted-foreground">{t("hr.noData")}</p>
         ) : (
           <Table>
             <TableHeader>
@@ -461,7 +464,7 @@ export default function HrReportsPage() {
                 ).map(([key, label]) => (
                   <TableHead
                     key={key}
-                    className="cursor-pointer select-none text-gray-400 hover:text-white"
+                    className="cursor-pointer select-none text-muted-foreground hover:text-foreground"
                     onClick={() => toggleSort(key)}
                   >
                     {label} <SortIcon col={key} />
@@ -479,19 +482,19 @@ export default function HrReportsPage() {
                       setExpandedRow(expandedRow === row.userId ? null : row.userId)
                     }
                   >
-                    <TableCell className="font-medium text-white">
+                    <TableCell className="font-medium text-foreground">
                       {lang === "ar" ? row.nameAr : row.name}
                     </TableCell>
-                    <TableCell className="text-gray-400 text-sm">
+                    <TableCell className="text-muted-foreground text-sm">
                       {roleLabel(row.role, t)}
                     </TableCell>
-                    <TableCell className="text-white font-semibold">
+                    <TableCell className="text-foreground font-semibold">
                       {row.totalHours}h
                     </TableCell>
                     <TableCell className="text-heritage-gold">
                       {row.billableHours}h
                     </TableCell>
-                    <TableCell className="text-gray-400">
+                    <TableCell className="text-muted-foreground">
                       {row.nonBillableHours}h
                     </TableCell>
                     <TableCell>
@@ -507,8 +510,8 @@ export default function HrReportsPage() {
                         {row.billableRatio}%
                       </span>
                     </TableCell>
-                    <TableCell className="text-gray-400">{row.casesCount}</TableCell>
-                    <TableCell className="text-gray-500">
+                    <TableCell className="text-muted-foreground">{row.casesCount}</TableCell>
+                    <TableCell className="text-muted-foreground">
                       {expandedRow === row.userId ? (
                         <ChevronUp className="h-4 w-4" />
                       ) : (
@@ -520,11 +523,11 @@ export default function HrReportsPage() {
                   {/* Expanded: individual work logs */}
                   {expandedRow === row.userId && (
                     <TableRow className="border-heritage-gold/10">
-                      <TableCell colSpan={8} className="bg-[#1e1e1e] p-0">
+                      <TableCell colSpan={8} className="bg-muted p-0">
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="border-b border-heritage-gold/10 text-gray-500">
+                              <tr className="border-b border-heritage-gold/10 text-muted-foreground">
                                 <th className="px-4 py-2 text-start">{t("hr.date")}</th>
                                 <th className="px-4 py-2 text-start">{t("hr.client")}</th>
                                 <th className="px-4 py-2 text-start">{t("hr.case")}</th>
@@ -540,19 +543,19 @@ export default function HrReportsPage() {
                                   key={log.id}
                                   className="border-b border-white/5 hover:bg-white/5"
                                 >
-                                  <td className="px-4 py-2 text-gray-400">
+                                  <td className="px-4 py-2 text-muted-foreground">
                                     {new Date(log.date).toLocaleDateString(
                                       lang === "ar" ? "ar-SA" : "en-GB",
                                     )}
                                   </td>
-                                  <td className="px-4 py-2 text-gray-300">{log.client}</td>
-                                  <td className="px-4 py-2 text-gray-400 text-xs">
+                                  <td className="px-4 py-2 text-foreground">{log.client}</td>
+                                  <td className="px-4 py-2 text-muted-foreground text-xs">
                                     {log.caseNumber}
                                   </td>
-                                  <td className="px-4 py-2 text-gray-400">
+                                  <td className="px-4 py-2 text-muted-foreground">
                                     {lang === "ar" ? log.workTypeAr : log.workType}
                                   </td>
-                                  <td className="px-4 py-2 font-medium text-white">
+                                  <td className="px-4 py-2 font-medium text-foreground">
                                     {log.hours}h
                                   </td>
                                   <td className="px-4 py-2">
@@ -561,12 +564,12 @@ export default function HrReportsPage() {
                                         {t("hr.filterBillable")}
                                       </span>
                                     ) : (
-                                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-gray-400">
+                                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                                         {t("hr.filterNonBillable")}
                                       </span>
                                     )}
                                   </td>
-                                  <td className="px-4 py-2 text-gray-500 text-xs max-w-40 truncate">
+                                  <td className="px-4 py-2 text-muted-foreground text-xs max-w-40 truncate">
                                     {log.notes}
                                   </td>
                                 </tr>
