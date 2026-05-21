@@ -109,13 +109,4 @@ Any new model must declare `@@index([...])` for:
 
 Format: `v0.X.0 — [what changed in plain English]`
 
-| Format | When |
-|--------|------|
-| `v0.X.0` | New module or feature |
-| `v0.X.1` | Bug fix or small tweak |
-| `v1.0.0` | Go-live on Azure |
-
-Examples:
-- `v0.3.0 — HR reports module rebuilt`
-- `v0.3.1 — fix work log filter bug`
-- `v0.4.0 — cases module complete`
+Full version naming rules and examples: see **ROADMAP.md → Version Naming Rules**.

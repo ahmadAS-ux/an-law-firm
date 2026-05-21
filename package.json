@@ -1,6 +1,6 @@
 {
   "name": "an-law-firm",
-  "version": "0.1.0",
+  "version": "0.6.2",
   "private": true,
   "engines": {
     "node": ">=20.0.0"

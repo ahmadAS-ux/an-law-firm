@@ -7,8 +7,8 @@
 
 ## Workspace boundary
 
-- Work only under **`C:\Users\Administrator\Documents\Clouda`**
-- Do not read or write paths outside Clouda.
+- Work only under **`C:\Users\Administrator\Documents\CLAUDE\A&N law firm\Sand`**
+- Do not read or write paths outside this folder.
 
 ---
 
@@ -32,11 +32,7 @@
 **Always use this format for commits and version names:**
 `v0.X.0 — what changed in plain English`
 
-| Format | When |
-|--------|------|
-| `v0.X.0` | New module or feature |
-| `v0.X.1` | Bug fix or small tweak |
-| `v1.0.0` | Go-live on Azure |
+Full version naming table: see **ROADMAP.md → Version Naming Rules**.
 
 **Never ask the user what to name the version — use the format above and continue.**
 
@@ -79,7 +75,23 @@
 5. After each phase: run `npm run dev`, smoke-test, commit with version name
 6. Update `ROADMAP.md` to reflect new status
 7. Update ENHANCEMENTS.md — mark any user-reported items as Done
-8. Check SECURITY.md — confirm no permission or auth rules are affected before any Prisma query change
+8. Update `CHANGELOG.md` — add an entry for the version just shipped
+9. Check SECURITY.md — confirm no permission or auth rules are affected before any Prisma query change
+---
+
+## Coding Conventions
+
+- **Imports:** Use `@/` alias (`@/components/...`, `@/lib/...`)
+- **Server data:** Route handlers use Prisma from `@/lib/prisma` singleton
+- **UI:** shadcn components; RTL-aware layouts (`dir`, `text-start`, logical CSS properties)
+- **Forms:** Validate on server; show bilingual errors via i18n keys
+- **IDs:** Prisma `cuid()` where schema defines it
+
+**Agent reminders:**
+- Tag `prisma/schema.prisma` when adding features that touch data
+- Tag `src/lib/permissions.ts` when adding routes or pages that need RBAC
+- New strings go in `src/i18n/ar.ts` and `src/i18n/en.ts` — no hardcoded literals in components
+
 ---
 
 ## Autonomous Execution

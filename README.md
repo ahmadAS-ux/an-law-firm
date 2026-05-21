@@ -4,7 +4,7 @@
 Internal LPMS for A&N Law Firm — a boutique advocacy firm in Riyadh. Bilingual Arabic-RTL / English. Manages clients, cases, tasks, work logs, files, HR reporting, audit trail, and conflict checks.
 
 **Status:** Phase 1 — Active Development (Staging on Render.com)
-**Current version:** v0.4.4
+**Current version:** v0.6.2
 **Staging:** https://an-law-firm.onrender.com
 
 ## Tech Stack
@@ -43,13 +43,13 @@ Internal LPMS for A&N Law Firm — a boutique advocacy firm in Riyadh. Bilingual
 | SECURITY.md | Security checklist and rules |
 | QUALITY_GATES.md | Pre-merge quality checks |
 | AZURE.md | Phase A/B/C migration plan |
-| UI_UX_REVIEW.md | Pre-go-live audit (will archive after v1.0.0) |
+| archive/UI_UX_REVIEW_v0.4.4.md | Pre-go-live UI/UX audit, v0.4.4 snapshot (archived) |
 | PROJECT_HEALTH_REVIEW.md | Go-live sign-off checklist |
 | LAST_SESSION.md | Most recent session summary |
 
 ## Deploy
 
-Use the `/deploy` slash command in Claude Code. See `Deploy.md`.
+Use the `/deploy` slash command in Claude Code. See `.claude/commands/deploy.md`.
 
 ## License
 

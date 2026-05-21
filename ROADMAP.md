@@ -1,11 +1,13 @@
 # A&N LPMS — Roadmap
 
-> **Current Version:** `v0.5.0`
+> **Current Version:** `v0.6.2`
 > **Stage:** Phase 1 — Active Development (Staging on Render.com)
 > **Next Milestone:** `v1.0.0` = Live on Azure with Microsoft SSO
 > **UI Audit Cycle:** v0.4.4 Antigravity audit complete — all 8 confirmed issues fixed in v0.4.5
 >
 > **v0.5.0 complete** — Schema foundation (departments, roles, permissions, matters, hearings, invoices), DB-driven permissions matrix UI, department management UI, light theme as default, Matters module with approval workflow, decimal billing (0.1h steps), Vitest setup with 20 passing tests.
+>
+> **v0.6.0–v0.6.2 complete** — Reports module: ReportConfig schema + composite indexes + 3 report permission keys (`viewOwnReports`, `viewDepartmentReports`, `viewAllReports`); Riyadh-tz fixed-offset query library + tagged matter keys + single-query missing-entry fill (v0.6.0). HR Reports stuck in permanent dark mode fixed — CSS variable + Recharts useTheme overhaul (v0.6.2).
 
 ---
 
@@ -31,19 +33,19 @@ Examples:
 ## Phase 1 — Core Modules (13 Total)
 
 ### ✅ Done
-- [ ] Project setup (Next.js 14, Tailwind, Prisma, shadcn/ui)
-- [ ] Auth (cookie-based dev login, route protection)
-- [ ] Users & Permissions module
-- [ ] Dashboard (basic)
-- [ ] Clients module
-- [ ] Cases / Matters module
-- [ ] Tasks module
-- [ ] Work Logs module
-- [ ] Services / Work Types module
-- [ ] Audit Log module
-- [ ] Notifications module
-- [ ] File Management module
-- [ ] Conflict Check module
+- [x] Project setup (Next.js 14, Tailwind, Prisma, shadcn/ui)
+- [x] Auth (cookie-based dev login, route protection)
+- [x] Users & Permissions module
+- [x] Dashboard (basic)
+- [x] Clients module
+- [x] Cases / Matters module
+- [x] Tasks module
+- [x] Work Logs module
+- [x] Services / Work Types module
+- [x] Audit Log module
+- [x] Notifications module
+- [x] File Management module
+- [x] Conflict Check module
 
 ### 🔄 In Progress
 - [x] HR Reports module — verified complete in v0.4.0 (filters, table, bar chart, export, date fix, bilingual CSV)
@@ -72,7 +74,7 @@ Examples:
 
 ---
 
-## Schema Migrations Required Before Phase 2
+## Schema Migrations Required Before Phase 2 — ✅ All complete in v0.5.0
 
 > Migration session target: v0.5.0 (one dedicated session) ← **COMPLETE — see above**
 > Estimated time: 2 hours including local testing
