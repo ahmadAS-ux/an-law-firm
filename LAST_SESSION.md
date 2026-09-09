@@ -77,3 +77,15 @@ PowerShell lifecycle shell configuration is process-local to this Windows A&N pa
 - [ ] Separate implementation review passes.
 
 STATUS: ready for implementation review
+
+## Staging recovery — 2026-09-09/10
+
+Status: partial; no remote database/configuration mutation or deploy executed. Render MCP was configured using the requested URL/client id, but OAuth remains incomplete. DATABASE_URL and RENDER_API_KEY are absent in the execution environment, including the authorized unsandboxed check, and in user/machine variables. No .env fallback was used.
+
+Evidence: docs/verification/staging-recovery-2026-09-09.md records sanitized commands/results and all blocked steps. Service plan, dashboard build/pre-deploy commands, auto-deploy, attached disk and failed-deploy logs could not be fetched. The user-reported P3018 contradicts the earlier db-push assumption; the exact dashboard command remains unverified.
+
+Public diagnostics only (not post-deploy verification): /login 200, no password input in server-rendered HTML; /uploads/anything.pdf 404; /api/tasks 307 instead of required 401 JSON. The login HTML observation alone does not establish client-rendered UI behavior. The wrong-secret POST was not attempted without a verified active user id. Step 4 has not passed, so the recovery documentation is committed locally only; no push.
+
+No new secrets were generated or installed. The planned local path docs/backups/.dev-login-secret.local has been added to .gitignore but no file created. Required next conditions are authenticated Render MCP access and the two credential variables available to the execution shell. Once available, follow the ordered Part C recovery table; stop database work on any original-schema differences. No claim of staging recovery or release sign-off is made.
+
+STAGING: partial — Render OAuth incomplete and required shell credentials unavailable; verification did not pass.

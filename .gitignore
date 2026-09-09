@@ -53,3 +53,4 @@ scripts/migrate-uploads.progress.jsonl
 
 public/uploads/test-deny.pdf
 .claude/
+docs/backups/.dev-login-secret.local

@@ -316,3 +316,11 @@
 - Missing-context scoped grants deny. PARTIAL is an existing scope whose previous granted semantics are retained; full scope migration remains v0.8.0.
 - Final plain npm ci failed in cmd.exe dependency postinstall on A&N path. Full verbatim evidence: docs/verification/npm-ci.log. Resolved: npm ci passed with the process-local PowerShell lifecycle shell. Initial isolated inventory diagnostics overlapped dependency replacement and reported missing TypeScript library files; rerun after clean install, never interpreted as code failures.
 - Clean-install Prisma types were absent before explicit generation; pre-generation diagnostics are in docs/verification/typecheck-before-generate.log. Command sequence corrected to run npm run db:generate before TypeScript/tests.
+
+## v0.7.0 staging recovery — 2026-09-09/10
+
+**Render dashboard command assumption was wrong: actual command was not retrievable in this attempt.** The user reports that it invoked `prisma migrate deploy`, attempted to apply `0_init` to the populated database and failed P3018 (`type MatterStatus already exists`). This contradicts the previous implementation prompt's db-push-plus-seed assumption. The full command and failed-deploy log remain unverified, not inferred from render.yaml.
+
+Recovery blocked before Step 2: no process DATABASE_URL or RENDER_API_KEY, including unsandboxed execution; no values in user/machine environment either. Render MCP configuration added, but OAuth remains Not logged in. No .env credential fallback, remote migrations, env updates, command changes, deploy trigger or push occurred. Sanitized command output: docs/verification/staging-recovery-2026-09-09.md. Part C status table: docs/MIGRATION_BASELINE.md.
+
+Public diagnostics found /login 200, /uploads/anything.pdf 404 and /api/tasks 307 instead of required 401 JSON. No password input appears in server HTML; client rendering was not verified. Wrong-secret login and actual recovery deploy tests are blocked. The recovery commit remains local as explicitly required when Step 4 does not pass.
