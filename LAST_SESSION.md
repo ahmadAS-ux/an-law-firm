@@ -89,3 +89,12 @@ Public diagnostics only (not post-deploy verification): /login 200, no password 
 No new secrets were generated or installed. The planned local path docs/backups/.dev-login-secret.local has been added to .gitignore but no file created. Required next conditions are authenticated Render MCP access and the two credential variables available to the execution shell. Once available, follow the ordered Part C recovery table; stop database work on any original-schema differences. No claim of staging recovery or release sign-off is made.
 
 STAGING: partial — Render OAuth incomplete and required shell credentials unavailable; verification did not pass.
+
+
+## Staging recovery 2026-09-10
+
+Partial recovery; documentation committed locally only, no push. Render MCP now works. Explicit workspace tea-d75k71nfte5s73fdo810 was matched to both supplied resource IDs. Service Starter, auto-deploy yes/commit/main; database available. Actual Build Command: npm install && npx prisma generate && npx prisma migrate deploy && npm run build. Pre-Deploy Command and disk attachment are not exposed in the service response and remain unconfirmed.
+
+Saved the full dep-dagsbh49v7es73ejbn2g failure log confirming P3018 / MatterStatus already exists. DATABASE_URL and RENDER_API_KEY exist in the process but contain placeholders; the database host does not match the supplied Render database. Step 2a failed P1001 before connection; no database mutation occurred. REST inspection also failed with the invalid key. No credentials were taken from .env, and no secret values were recorded.
+
+Steps 2b-g, configuration and deploy were not run because prerequisites failed. No new secret exists at the planned gitignored docs/backups/.dev-login-secret.local path. Existing remote env vars, plan, disk and auto-deploy remain untouched. Step 4 did not pass. Evidence and every captured command/output: docs/verification/staging-recovery-2026-09-10.md. Resume Part C with valid process credentials; do not mark either migration applied without the required schema comparison. The unrelated .env.example edit is excluded from this commit.

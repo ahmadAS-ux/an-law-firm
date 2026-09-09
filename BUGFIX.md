@@ -324,3 +324,14 @@
 Recovery blocked before Step 2: no process DATABASE_URL or RENDER_API_KEY, including unsandboxed execution; no values in user/machine environment either. Render MCP configuration added, but OAuth remains Not logged in. No .env credential fallback, remote migrations, env updates, command changes, deploy trigger or push occurred. Sanitized command output: docs/verification/staging-recovery-2026-09-09.md. Part C status table: docs/MIGRATION_BASELINE.md.
 
 Public diagnostics found /login 200, /uploads/anything.pdf 404 and /api/tasks 307 instead of required 401 JSON. No password input appears in server HTML; client rendering was not verified. Wrong-secret login and actual recovery deploy tests are blocked. The recovery commit remains local as explicitly required when Step 4 does not pass.
+
+
+### Render dashboard command assumption was wrong: actual command was npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+- **Found by:** Codex via authenticated Render MCP and failed-deployment logs
+- **Date:** 2026-09-10
+- **Module:** Staging deployment / migration baseline
+- **Expected:** Verify actual Render dashboard settings before selecting a reconciliation path.
+- **Actual:** The prior schema-push assumption was false; the dashboard ran migrate deploy against a populated database, attempting 0_init and failing P3018 on MatterStatus.
+- **Priority:** High
+- **Status:** Diagnosis confirmed; recovery blocked by placeholder process credentials. Dashboard command unchanged.
+- **Evidence:** docs/verification/staging-recovery-2026-09-10.md and render-failed-deploy-2026-09-10.json. Target build npm run build; target pre-deploy npm run release after successful ordered reconciliation.

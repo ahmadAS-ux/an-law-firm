@@ -1,6 +1,6 @@
 # v0.7.0 migration and storage cutover
 
-Status: staging recovery attempted 2026-09-09/10; blocked before database reconciliation because the required process credentials are absent and Render OAuth is incomplete. No remote database commands were executed by the agent.
+Status: staging recovery retried 2026-09-10; Render MCP is authenticated and inspection is complete. Process credentials contain placeholders. The first Prisma reconciliation command failed P1001 before connecting; no remote database mutation, configuration change, deployment or push occurred. See the latest Part C status below.
 Part A is confirmed by Ahmad in the invocation and docs/backups/PART_A_2026-09.md. Backup artifacts and restoration remain operator evidence, not independently verified here.
 
 ## Command conventions
@@ -20,7 +20,7 @@ Use the installed Prisma 6 CLI: `node node_modules/prisma/build/index.js`, or `n
 
 ## Part C — staging reconciliation after the first auto-deploy
 
-SUPERSEDED ASSUMPTION: the implementation prompt said the dashboard explicitly invoked schema push and prisma/seed.ts. The recovery report instead describes migrate deploy attempting 0_init and failing P3018. The exact dashboard command has not been fetched because Render OAuth is incomplete. That path now reaches a reference-only compatibility seed. Repository build and render-build scripts do not mutate the DB. Verify the actual dashboard command: if it only invokes npm run build/render-build, it will NOT apply new columns; complete migrations with the operator before serving the new code. Do not assume a successful remote deployment.
+VERIFIED 2026-09-10: the actual dashboard Build Command is `npm install && npx prisma generate && npx prisma migrate deploy && npm run build`. The failed deploy attempted 0_init and failed P3018 on the existing MatterStatus type. This supersedes the earlier schema-push assumption. Repository build and render-build scripts do not mutate the DB. The ordered recovery sequence in the latest status below supersedes steps 6-7 for this failed-initial-baseline case.
 
 6. Compare staging against updated `prisma/schema.prisma`: `migrate diff --from-url <staging> --to-schema-datamodel prisma/schema.prisma --exit-code`. Require 0. IF NOT EXISTS avoids duplicate objects but cannot validate their types/constraints. If differences remain, stop reconciliation and resolve them explicitly.
 7. Only on exact agreement, mark `0_init` and `20260909000000_v070_baseline_additions` applied using `migrate resolve --applied ...`; check `migrate status`.
@@ -67,3 +67,27 @@ When authenticated access and process credentials become available, execute exac
 The current recovery request specifies Build Command `npm run build` and Pre-Deploy Command `npm run release` if supported. If unsupported, its explicitly accepted staging exception is Build Command `npm run build && npm run release`; document the exception in SECURITY.md only when that configuration is actually selected. Do not change plan/disk/auto-deploy. These settings have NOT been applied here.
 
 The planned local dev-login-secret file is docs/backups/.dev-login-secret.local and is ignored by Git. It has not been created; no new secret was generated or uploaded.
+
+
+## Part C recovery status — 2026-09-10 (latest)
+
+Evidence: [command and output record](verification/staging-recovery-2026-09-10.md), including the complete failed-deploy log; structured log: [Render failure](verification/render-failed-deploy-2026-09-10.json).
+
+| Task | Done? | Evidence |
+|---|---|---|
+| Workspace and service/database inspection | Yes | Explicit workspace tea-d75k71nfte5s73fdo810 matches both resources; service Starter, auto-deploy yes/commit/main; database available on PostgreSQL 16 |
+| Actual Build Command and failed log | Yes | npm install && npx prisma generate && npx prisma migrate deploy && npm run build; dep-dagsbh49v7es73ejbn2g failed P3018 on MatterStatus |
+| Pre-Deploy Command and persistent disk | Not confirmed | Fields absent from MCP response; REST could not authenticate with placeholder process API key |
+| 2a: resolve 0_init rolled-back | No | Attempt failed P1001; process URL contains placeholder and does not match target database host; no connection or mutation |
+| 2b: original-schema diff | Not run | 2a prerequisite failed; no schema agreement claimed |
+| 2c: resolve 0_init applied | Not run | Requires empty original-schema diff |
+| 2d: migrate deploy | Not run | Requires reconciled baseline |
+| 2e-f: migrate status and updated-schema diff | Not run | Requires successful migrations |
+| 2g: reference-only seed | Entry confirmed; not run | CLI reference branch calls seedReference; no demo/reset invocation |
+| Step 3 environment and REST command updates | Not done | Prerequisites failed; preserved existing environment and settings; no secrets generated |
+| Step 4 deploy, logs and four HTTP assertions | Not done | No recovery deployment; cannot claim post-deployment verification |
+| Step 5 documentation and commit | Local commit only | Step 4 did not pass, so no push to main |
+
+Resume only with valid credentials in the process environment. Execute in order: resolve --rolled-back 0_init; diff from the process URL to prisma/.baseline/schema.original.prisma with --exit-code (require 0); resolve --applied 0_init; migrate deploy; migrate status; diff to prisma/schema.prisma with --exit-code (require 0); npm.cmd run db:seed:reference. Use node .\node_modules\prisma\build\index.js for every Prisma command. Any original-schema difference stops database steps and permits reporting only. Never source credentials from .env.
+
+Then set the requested four environment variables with merge semantics, set Build Command to npm run build and Pre-Deploy Command to npm run release using REST, preserve plan/disk/auto-deploy, deploy and verify all four requested HTTP assertions before pushing. No dev secret was created in this attempt; the reserved ignored path is docs/backups/.dev-login-secret.local. Historical status sections above describe prior attempts.
