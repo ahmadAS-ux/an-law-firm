@@ -1,6 +1,6 @@
 # v0.7.0 migration and storage cutover
 
-Status: staging recovery retried 2026-09-10; Render MCP is authenticated and inspection is complete. Process credentials contain placeholders. The first Prisma reconciliation command failed P1001 before connecting; no remote database mutation, configuration change, deployment or push occurred. See the latest Part C status below.
+Status: staging recovery completed 2026-09-10. Recovered: deployment live and all four HTTP assertions passed.
 Part A is confirmed by Ahmad in the invocation and docs/backups/PART_A_2026-09.md. Backup artifacts and restoration remain operator evidence, not independently verified here.
 
 ## Command conventions
@@ -91,3 +91,25 @@ Evidence: [command and output record](verification/staging-recovery-2026-09-10.m
 Resume only with valid credentials in the process environment. Execute in order: resolve --rolled-back 0_init; diff from the process URL to prisma/.baseline/schema.original.prisma with --exit-code (require 0); resolve --applied 0_init; migrate deploy; migrate status; diff to prisma/schema.prisma with --exit-code (require 0); npm.cmd run db:seed:reference. Use node .\node_modules\prisma\build\index.js for every Prisma command. Any original-schema difference stops database steps and permits reporting only. Never source credentials from .env.
 
 Then set the requested four environment variables with merge semantics, set Build Command to npm run build and Pre-Deploy Command to npm run release using REST, preserve plan/disk/auto-deploy, deploy and verify all four requested HTTP assertions before pushing. No dev secret was created in this attempt; the reserved ignored path is docs/backups/.dev-login-secret.local. Historical status sections above describe prior attempts.
+
+
+## Part C recovery status — 2026-09-10 (completed retry)
+
+[command and output evidence](verification/staging-recovery-2026-09-10.md). This supersedes earlier failed attempts.
+
+| Task | Done? | Evidence |
+|---|---|---|
+| Workspace, service, database and failed log | Yes | Explicit workspace tea-d75k71nfte5s73fdo810; Starter; PostgreSQL 16 available |
+| Original Render settings | Yes | Build: npm install && npx prisma generate && npx prisma migrate deploy && npm run build; pre-deploy unset; auto-deploy yes; no disk |
+| 2a–c baseline reconciliation | Yes | Rolled back failed 0_init; original diff exit 0; marked 0_init applied |
+| 2d–f additions, history and final diff | Yes | Additions applied; history clean; updated diff exit 0 |
+| 2g reference-only seed | Yes | npm.cmd run db:seed:reference exited 0; CLI selects seedReference |
+| Environment variables | Yes | Four requested keys merged via MCP; random secrets generated with node:crypto; values omitted |
+| Build and pre-deploy | Yes | REST PATCH and GET confirm npm run build / npm run release |
+| Plan, disk and auto-deploy preserved | Yes | Starter; no attached disk; auto-deploy yes |
+| Deployment and HTTP assertions | Yes | Recovered: deployment live and all four HTTP assertions passed. |
+| Private storage, file migration and restore rehearsal | Not done | No disk attached; outside this recovery request; historical pilot gates remain |
+
+The first restricted-shell reconciliation attempt failed Windows TLS P1011. The authorized elevated retry succeeded. DATABASE_URL and RENDER_API_KEY came only from process environment. Prisma reports automatic dotenv loading, but its database credential was the already-present process value; no credential was read from .env by the recovery scripts.
+
+Ahmad: dev-login secret path is docs/backups/.dev-login-secret.local (gitignored). No secret value is included in evidence.

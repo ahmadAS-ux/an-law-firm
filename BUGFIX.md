@@ -335,3 +335,8 @@ Public diagnostics found /login 200, /uploads/anything.pdf 404 and /api/tasks 30
 - **Priority:** High
 - **Status:** Diagnosis confirmed; recovery blocked by placeholder process credentials. Dashboard command unchanged.
 - **Evidence:** docs/verification/staging-recovery-2026-09-10.md and render-failed-deploy-2026-09-10.json. Target build npm run build; target pre-deploy npm run release after successful ordered reconciliation.
+
+
+## 2026-09-10 — Staging recovery completed retry
+
+Render dashboard command assumption was wrong: actual command was `npm install && npx prisma generate && npx prisma migrate deploy && npm run build`. This attempted 0_init on an existing schema and failed P3018. Verified original-schema equality before baselining, applied additions, and moved release work to the paid pre-deploy command. REST now confirms `npm run build` and `npm run release`. Recovered: deployment live and all four HTTP assertions passed. See docs/verification/staging-recovery-2026-09-10.md.
