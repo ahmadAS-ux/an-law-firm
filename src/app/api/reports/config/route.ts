@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { hasPermissionDb } from "@/lib/permissions";
+import { hasPermissionDb } from "@/lib/permissions.server";
 
 export const dynamic = "force-dynamic";
 

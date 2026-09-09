@@ -1,0 +1,18 @@
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:2: NOTICE:  column "isDemo" of relation "User" already exists, skipping
+ALTER TABLE
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:5: NOTICE:  column "isDemo" of relation "Matter" already exists, skipping
+ALTER TABLE
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:8: NOTICE:  column "isDemo" of relation "Case" already exists, skipping
+ALTER TABLE
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:11: NOTICE:  column "isDemo" of relation "Client" already exists, skipping
+ALTER TABLE
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:14: NOTICE:  column "isDemo" of relation "Task" already exists, skipping
+ALTER TABLE
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:17: NOTICE:  column "isDemo" of relation "WorkLog" already exists, skipping
+ALTER TABLE
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:21: NOTICE:  column "isDemo" of relation "File" already exists, skipping
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:21: NOTICE:  column "storageKey" of relation "File" already exists, skipping
+ALTER TABLE
+DO
+psql:prisma/migrations/20260909000000_v070_baseline_additions/migration.sql:40: NOTICE:  relation "SystemFlag" already exists, skipping
+CREATE TABLE

@@ -1,49 +1,26 @@
 import { NextResponse } from "next/server";
-import { unlink } from "fs/promises";
-import path from "path";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { hasPermission } from "@/lib/permissions";
-import { createAuditLog } from "@/lib/audit";
-
-type Ctx = { params: Promise<{ id: string }> };
-
+import { canReadFile, canDeleteFile } from "@/lib/file-access";
+export const dynamic = "force-dynamic";
+type Ctx = { params: { id: string } };
 export async function GET(_request: Request, ctx: Ctx) {
   const user = await getCurrentUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const { id } = await ctx.params;
-  const f = await prisma.file.findUnique({
-    where: { id },
-    include: { case: true },
-  });
-  if (!f) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-  if (user.role === "EMPLOYEE" && f.case && f.case.assignedToId !== user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  return NextResponse.json({ file: f });
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const file = await prisma.file.findFirst({ where: { id: ctx.params.id, deletedAt: null }, include: { case: true } });
+  if (!file || !canReadFile(user, file)) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const { storageKey: _key, url: _url, ...fileDTO } = file; void _key; void _url;
+  return NextResponse.json({ file: fileDTO });
 }
-
 export async function DELETE(_request: Request, ctx: Ctx) {
   const user = await getCurrentUser();
-  if (!user || !hasPermission(user.role, "manageFiles")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  const { id } = await ctx.params;
-  const f = await prisma.file.findUnique({ where: { id } });
-  if (!f) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-  const disk = path.join(process.cwd(), "public", f.url.replace(/^\//, ""));
-  try {
-    await unlink(disk);
-  } catch {
-    /* ignore */
-  }
-  await prisma.file.delete({ where: { id } });
-  await createAuditLog(user.id, "DELETE", "File", id, {});
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const file = await prisma.file.findFirst({ where: { id: ctx.params.id, deletedAt: null } });
+  if (!file) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!canDeleteFile(user, file)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  await prisma.$transaction(async (tx) => {
+    await tx.file.update({ where: { id: file.id }, data: { deletedAt: new Date() } });
+    await tx.auditLog.create({ data: { userId: user.id, action: "DELETE", entityType: "File", entityId: file.id, details: JSON.stringify({ softDelete: true }) } });
+  });
   return NextResponse.json({ ok: true });
 }

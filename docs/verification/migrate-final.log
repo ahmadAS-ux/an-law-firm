@@ -1,0 +1,25 @@
+
+> an-law-firm@0.7.0 db:migrate
+> node node_modules/prisma/build/index.js migrate deploy
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "v070_final", schema "public" at "127.0.0.1:55437"
+
+2 migrations found in prisma/migrations
+
+Applying migration `0_init`
+Applying migration `20260909000000_v070_baseline_additions`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 0_init/
+    └─ migration.sql
+  └─ 20260909000000_v070_baseline_additions/
+    └─ migration.sql
+      
+All migrations have been successfully applied.

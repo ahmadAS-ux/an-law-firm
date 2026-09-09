@@ -1,4 +1,4 @@
-// A&N Law Firm — SQLite dev; PostgreSQL in production (see Deploy)
+// A&N Law Firm — PostgreSQL in all environments
 // Enum-like fields use String; allowed values in comments.
 
 generator client {
@@ -12,6 +12,8 @@ datasource db {
 
 // role: PARTNER | ADMIN | MANAGER | EMPLOYEE (legacy string — deprecated in v0.5.0, replaced by roleId)
 model User {
+  isDemo Boolean @default(false)
+
   id           String      @id @default(cuid())
   email        String      @unique
   name         String
@@ -126,6 +128,8 @@ enum MatterStatus {
 }
 
 model Matter {
+  isDemo Boolean @default(false)
+
   id           String       @id @default(cuid())
   matterNumber String       @unique
   title        String
@@ -291,6 +295,8 @@ model Payment {
 // status: OPEN | ACTIVE | CLOSED
 // priority: LOW | MEDIUM | HIGH | URGENT
 model Case {
+  isDemo Boolean @default(false)
+
   id            String      @id @default(cuid())
   caseNumber    String      @unique
   title         String
@@ -328,6 +334,8 @@ model Case {
 }
 
 model Client {
+  isDemo Boolean @default(false)
+
   id             String    @id @default(cuid())
   name           String
   nameAr         String
@@ -358,6 +366,8 @@ model Client {
 // status: TODO | IN_PROGRESS | COMPLETED | CANCELLED
 // priority: LOW | MEDIUM | HIGH | URGENT
 model Task {
+  isDemo Boolean @default(false)
+
   id            String    @id @default(cuid())
   title         String
   titleAr       String
@@ -397,6 +407,8 @@ model WorkType {
 }
 
 model WorkLog {
+  isDemo Boolean @default(false)
+
   id             String    @id @default(cuid())
   userId         String
   user           User      @relation(fields: [userId], references: [id])
@@ -436,12 +448,15 @@ model WorkLog {
 }
 
 model File {
+  isDemo Boolean @default(false)
+
   id           String    @id @default(cuid())
   name         String
   originalName String
   mimeType     String
   size         Int
-  url          String
+  url          String? // Deprecated; legacy records only
+  storageKey   String?
   caseId       String?
   case         Case?     @relation(fields: [caseId], references: [id])
   matterId     String?
@@ -513,4 +528,9 @@ model ReportConfig {
   targetHoursAccountant  Decimal  @default(0.0)  @db.Decimal(5, 1)
   lateEntryThresholdDays Int      @default(2)
   updatedAt              DateTime @updatedAt
+}
+
+model SystemFlag {
+  key String @id
+  createdAt DateTime @default(now())
 }

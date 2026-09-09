@@ -4,7 +4,9 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install --include=dev && npm run render-build
+    buildCommand: npm ci && npm run build
+    # Verify actual paid plan before configuring preDeployCommand: npm run release.
+    # Pre-deploy cannot access persistent disks; upload migration runs from service shell.
     startCommand: npm start
     envVars:
       - key: DATABASE_URL

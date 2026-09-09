@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import type { User } from "@prisma/client";
+import type { ClientUserDTO } from "@/types/auth";
 import { useRouter } from "next/navigation";
 
 type AuthCtx = {
-  user: User | null;
+  user: ClientUserDTO | null;
   isLoading: boolean;
-  login: (userId: string) => Promise<void>;
+  login: (userId: string, devSecret: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -15,7 +15,7 @@ type AuthCtx = {
 const Ctx = React.createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<User | null>(null);
+  const [user, setUser] = React.useState<ClientUserDTO | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const router = useRouter();
 
@@ -34,12 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
 
   const login = React.useCallback(
-    async (userId: string) => {
+    async (userId: string, devSecret: string) => {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId, devSecret }),
       });
       if (!res.ok) throw new Error("Login failed");
       const data = await res.json();

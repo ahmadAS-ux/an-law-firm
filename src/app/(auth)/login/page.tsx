@@ -58,16 +58,18 @@ export default function LoginPage() {
   const [users, setUsers] = React.useState<PickUser[]>([]);
   const [selected, setSelected] = React.useState<string>("");
   const [busy, setBusy] = React.useState(false);
+  const [devSecret, setDevSecret] = React.useState("");
+  const [unavailable, setUnavailable] = React.useState(false);
   const [fetchError, setFetchError] = React.useState<string>("");
 
   React.useEffect(() => {
     void fetch("/api/auth/users")
-      .then((r) => r.json())
+      .then(async (r) => { if (r.status === 404) { setUnavailable(true); return { users: [] }; } return r.json(); })
       .then((d) => {
-        if (d.error) setFetchError(d.error);
+        if (d.error) setFetchError("auth.failed");
         setUsers(d.users ?? []);
       })
-      .catch((e) => setFetchError(String(e)));
+      .catch(() => setFetchError("auth.failed"));
   }, []);
 
   React.useEffect(() => {
@@ -79,8 +81,11 @@ export default function LoginPage() {
     if (!selected) return;
     setBusy(true);
     try {
-      await login(selected);
+      await login(selected, devSecret);
+    } catch {
+      setFetchError("auth.failed");
     } finally {
+      setDevSecret("");
       setBusy(false);
     }
   }
@@ -118,7 +123,7 @@ export default function LoginPage() {
               </label>
               {fetchError && (
                 <p className="rounded bg-red-900/40 px-2 py-1 text-xs text-red-400 break-all">
-                  {fetchError}
+                  {t(fetchError)}
                 </p>
               )}
               <Select
@@ -137,10 +142,14 @@ export default function LoginPage() {
                 </SelectContent>
               </Select>
             </div>
+            {unavailable ? <p role="status">{t("auth.unavailable")}</p> : <div className="space-y-2">
+              <label htmlFor="dev-secret" className="text-sm text-gray-400">{t("auth.devSecret")}</label>
+              <input id="dev-secret" type="password" autoComplete="off" value={devSecret} onChange={(e) => setDevSecret(e.target.value)} className="w-full rounded border border-heritage-gold/40 bg-near-black p-2 text-white" />
+            </div>}
             <Button
               type="submit"
               className="w-full bg-heritage-gold text-near-black hover:bg-heritage-gold/90"
-              disabled={busy || !selected}
+              disabled={busy || !selected || !devSecret || unavailable}
             >
               <LogIn className="me-2 h-4 w-4" />
               {t("login.signIn")}

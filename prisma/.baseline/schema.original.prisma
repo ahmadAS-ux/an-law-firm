@@ -1,0 +1,516 @@
+// A&N Law Firm — SQLite dev; PostgreSQL in production (see Deploy)
+// Enum-like fields use String; allowed values in comments.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// role: PARTNER | ADMIN | MANAGER | EMPLOYEE (legacy string — deprecated in v0.5.0, replaced by roleId)
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  name         String
+  nameAr       String
+  role         String                        // Legacy role string — TODO: remove in v0.6.0 after roleId fully migrated
+  roleId       String?                       // DB-backed role (nullable during v0.5.0 migration)
+  dbRole       Role?       @relation("UserRole", fields: [roleId], references: [id])
+  teamId       String?
+  team         Team?       @relation("TeamMembers", fields: [teamId], references: [id])
+  departmentId String?
+  department   Department? @relation("DepartmentMembers", fields: [departmentId], references: [id])
+  avatarUrl    String?
+  isActive     Boolean     @default(true)
+  mfaEnabled   Boolean     @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  managedTeam        Team?        @relation("TeamManager")
+  managedDepartments Department[] @relation("DepartmentManager")
+
+  clientsCreated   Client[]       @relation("ClientCreatedBy")
+  casesAssigned    Case[]         @relation("CaseAssigned")
+  casesCreated     Case[]         @relation("CaseCreatedBy")
+  tasksAssigned    Task[]         @relation("TaskAssigned")
+  tasksCreated     Task[]         @relation("TaskCreatedBy")
+  workLogs         WorkLog[]
+  workLogsApproved WorkLog[]      @relation("WorkLogApprovedBy")
+  filesUploaded    File[]
+  auditLogs        AuditLog[]
+  notifications    Notification[]
+  conflictChecks   ConflictCheck[]
+  matters          Matter[]       @relation("MatterAssignee")
+  approvedMatters  Matter[]       @relation("MatterApprover")
+  invoicesCreated  Invoice[]      @relation("InvoiceCreator")
+  paymentsRecorded Payment[]      @relation("PaymentRecorder")
+  billingRates     BillingRate[]
+
+  @@index([deletedAt])
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  nameAr    String
+  managerId String   @unique
+  manager   User     @relation("TeamManager", fields: [managerId], references: [id])
+  createdAt DateTime @default(now())
+
+  members User[] @relation("TeamMembers")
+}
+
+model Department {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  nameAr    String
+  managerId String?
+  manager   User?     @relation("DepartmentManager", fields: [managerId], references: [id])
+  users     User[]    @relation("DepartmentMembers")
+  matters   Matter[]
+  cases     Case[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([deletedAt])
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  nameAr      String
+  isLocked    Boolean          @default(false)
+  users       User[]           @relation("UserRole")
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id              String           @id @default(cuid())
+  key             String           @unique
+  category        String
+  description     String
+  descriptionAr   String
+  rolePermissions RolePermission[]
+  createdAt       DateTime         @default(now())
+}
+
+model RolePermission {
+  id              String     @id @default(cuid())
+  roleId          String
+  role            Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId    String
+  permission      Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  granted         Boolean    @default(false)
+  scope           String     @default("ALL")
+  isLocked        Boolean    @default(false)
+  lockedDirection String?
+  updatedAt       DateTime   @updatedAt
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+}
+
+enum MatterStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+model Matter {
+  id           String       @id @default(cuid())
+  matterNumber String       @unique
+  title        String
+  titleAr      String
+  description  String?
+  status       MatterStatus @default(PENDING_APPROVAL)
+  clientId     String
+  client       Client       @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  departmentId String
+  department   Department   @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  assignedToId String
+  assignedTo   User         @relation("MatterAssignee", fields: [assignedToId], references: [id], onDelete: Restrict)
+  approvedById String?
+  approvedBy   User?        @relation("MatterApprover", fields: [approvedById], references: [id])
+  approvedAt   DateTime?
+  workLogs     WorkLog[]
+  files        File[]
+  invoices     Invoice[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+
+  @@index([clientId])
+  @@index([departmentId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([deletedAt])
+  @@index([assignedToId, status, deletedAt])
+}
+
+enum HearingType {
+  INITIAL
+  EVIDENTIARY
+  PRELIMINARY
+  FINAL
+  APPEAL
+  OTHER
+}
+
+model Hearing {
+  id             String      @id @default(cuid())
+  caseId         String
+  case           Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  hearingDate    DateTime
+  hearingType    HearingType @default(INITIAL)
+  court          String?
+  courtAr        String?
+  notes          String?
+  outlookEventId String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  deletedAt      DateTime?
+
+  @@index([caseId])
+  @@index([hearingDate])
+  @@index([deletedAt])
+}
+
+model BillingRate {
+  id            String    @id @default(cuid())
+  workTypeId    String?
+  workType      WorkType? @relation(fields: [workTypeId], references: [id], onDelete: SetNull)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  clientId      String?
+  client        Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  ratePerHour   Decimal   @db.Decimal(10, 2)
+  currency      String    @default("SAR")
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([workTypeId])
+  @@index([userId])
+  @@index([clientId])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  caseId        String?
+  case          Case?         @relation(fields: [caseId], references: [id])
+  matterId      String?
+  matter        Matter?       @relation(fields: [matterId], references: [id])
+  status        InvoiceStatus @default(DRAFT)
+  issueDate     DateTime      @default(now())
+  dueDate       DateTime?
+  subtotal      Decimal       @default(0) @db.Decimal(12, 2)
+  taxRate       Decimal       @default(15) @db.Decimal(5, 2)
+  taxAmount     Decimal       @default(0) @db.Decimal(12, 2)
+  total         Decimal       @default(0) @db.Decimal(12, 2)
+  currency      String        @default("SAR")
+  notes         String?
+  zohoInvoiceId String?
+  lines         InvoiceLine[]
+  payments      Payment[]
+  files         File[]
+  createdById   String
+  createdBy     User          @relation("InvoiceCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  @@index([clientId])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+model InvoiceLine {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  workLogId     String?
+  workLog       WorkLog? @relation(fields: [workLogId], references: [id])
+  description   String
+  descriptionAr String?
+  quantity      Decimal  @db.Decimal(10, 2)
+  unitPrice     Decimal  @db.Decimal(10, 2)
+  amount        Decimal  @db.Decimal(12, 2)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@index([invoiceId])
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CASH
+  CHEQUE
+  CARD
+  OTHER
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  amount        Decimal       @db.Decimal(12, 2)
+  paymentDate   DateTime      @default(now())
+  method        PaymentMethod @default(BANK_TRANSFER)
+  reference     String?
+  notes         String?
+  zohoPaymentId String?
+  recordedById  String
+  recordedBy    User          @relation("PaymentRecorder", fields: [recordedById], references: [id])
+  createdAt     DateTime      @default(now())
+
+  @@index([invoiceId])
+  @@index([paymentDate])
+}
+
+// status: OPEN | ACTIVE | CLOSED
+// priority: LOW | MEDIUM | HIGH | URGENT
+model Case {
+  id            String      @id @default(cuid())
+  caseNumber    String      @unique
+  title         String
+  titleAr       String
+  description   String      @default("")
+  descriptionAr String      @default("")
+  status        String
+  clientId      String
+  client        Client      @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  assignedToId  String
+  assignedTo    User        @relation("CaseAssigned", fields: [assignedToId], references: [id], onDelete: Restrict)
+  createdById   String
+  createdBy     User        @relation("CaseCreatedBy", fields: [createdById], references: [id])
+  priority      String
+  openDate      DateTime
+  closeDate     DateTime?
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+  deletedAt     DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  tasks    Task[]
+  workLogs WorkLog[]
+  files    File[]
+  hearings Hearing[]
+  invoices Invoice[]
+
+  @@index([clientId])
+  @@index([assignedToId, status])
+  @@index([departmentId])
+  @@index([deletedAt])
+  @@index([assignedToId, status, deletedAt])
+  @@index([closeDate, assignedToId])
+}
+
+model Client {
+  id             String    @id @default(cuid())
+  name           String
+  nameAr         String
+  email          String    @default("")
+  phone          String    @default("")
+  address        String    @default("")
+  addressAr      String    @default("")
+  notes          String    @default("")
+  notesAr        String    @default("")
+  isActive       Boolean   @default(true)
+  zohoCustomerId String?
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  createdById    String
+  createdBy      User      @relation("ClientCreatedBy", fields: [createdById], references: [id])
+
+  cases        Case[]
+  workLogs     WorkLog[]
+  matters      Matter[]
+  billingRates BillingRate[]
+  invoices     Invoice[]
+  files        File[]
+
+  @@index([deletedAt])
+}
+
+// status: TODO | IN_PROGRESS | COMPLETED | CANCELLED
+// priority: LOW | MEDIUM | HIGH | URGENT
+model Task {
+  id            String    @id @default(cuid())
+  title         String
+  titleAr       String
+  description   String    @default("")
+  descriptionAr String    @default("")
+  status        String
+  priority      String
+  dueDate       DateTime?
+  caseId        String?
+  case          Case?     @relation(fields: [caseId], references: [id])
+  assignedToId  String
+  assignedTo    User      @relation("TaskAssigned", fields: [assignedToId], references: [id])
+  createdById   String
+  createdBy     User      @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([assignedToId, status])
+  @@index([assignedToId, status, dueDate])
+  @@index([assignedToId, completedAt])
+}
+
+model WorkType {
+  id            String   @id @default(cuid())
+  name          String
+  nameAr        String
+  description   String   @default("")
+  descriptionAr String   @default("")
+  isActive      Boolean  @default(true)
+  zohoItemId    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workLogs     WorkLog[]
+  billingRates BillingRate[]
+}
+
+model WorkLog {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  clientId       String
+  client         Client    @relation(fields: [clientId], references: [id])
+  caseId         String?
+  case           Case?     @relation(fields: [caseId], references: [id])
+  matterId       String?
+  matter         Matter?   @relation(fields: [matterId], references: [id])
+  workTypeId     String
+  workType       WorkType  @relation(fields: [workTypeId], references: [id])
+  hours          Float
+  isBillable     Boolean
+  date           DateTime
+  notes          String    @default("")
+  notesAr        String    @default("")
+  outlookEventId String?
+  isApproved     Boolean   @default(false)
+  approvedById   String?
+  approvedBy     User?     @relation("WorkLogApprovedBy", fields: [approvedById], references: [id])
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  invoiceLines InvoiceLine[]
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([caseId])
+  @@index([matterId])
+  @@index([date])
+  @@index([deletedAt])
+  @@index([userId, date])
+  @@index([userId, date, isBillable])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
+
+model File {
+  id           String    @id @default(cuid())
+  name         String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  caseId       String?
+  case         Case?     @relation(fields: [caseId], references: [id])
+  matterId     String?
+  matter       Matter?   @relation(fields: [matterId], references: [id])
+  clientId     String?
+  client       Client?   @relation(fields: [clientId], references: [id])
+  invoiceId    String?
+  invoice      Invoice?  @relation(fields: [invoiceId], references: [id])
+  uploadedById String
+  uploadedBy   User      @relation(fields: [uploadedById], references: [id])
+  version      Int       @default(1)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   String
+  details    String?
+  ipAddress  String?
+  category   String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType])
+  @@index([createdAt])
+}
+
+// type: TASK_ASSIGNED | DEADLINE_REMINDER | CASE_STATUS_CHANGE | GENERAL
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  titleAr   String
+  message   String
+  messageAr String
+  type      String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+}
+
+model ConflictCheck {
+  id            String   @id @default(cuid())
+  searchTerm    String
+  searchTermAr  String
+  results       String
+  performedById String
+  performedBy   User     @relation(fields: [performedById], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+// Singleton — always upserted with id = "default"
+model ReportConfig {
+  id                     String   @id @default("default")
+  workweekDays           Int[]    @default([0, 1, 2, 3, 4])
+  standardHoursPerDay    Decimal  @default(8.0)  @db.Decimal(3, 1)
+  targetHoursPartner     Decimal  @default(100.0) @db.Decimal(5, 1)
+  targetHoursManager     Decimal  @default(120.0) @db.Decimal(5, 1)
+  targetHoursEmployee    Decimal  @default(140.0) @db.Decimal(5, 1)
+  targetHoursAdminStaff  Decimal  @default(0.0)  @db.Decimal(5, 1)
+  targetHoursAccountant  Decimal  @default(0.0)  @db.Decimal(5, 1)
+  lateEntryThresholdDays Int      @default(2)
+  updatedAt              DateTime @updatedAt
+}

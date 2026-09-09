@@ -35,7 +35,7 @@ Copy this template and paste at the top of the relevant section:
     - No common validation keys (required, invalid email, min length, phone format)
     - No common toast keys (saved, deleted, error, loading)
 - **Priority:** High (blocks Gate 5 and new Gate 12)
-- **Status:** Pending — scheduled for v0.5.0
+- **Status:** Open — unverified; re-audit in v0.8.0
 
 ---
 
@@ -109,3 +109,35 @@ Copy this template and paste at the top of the relevant section:
 - High priority = blocking real work or partner request
 - Medium = improves daily use, schedule within 2 modules
 - Low = polish, do after go-live
+
+### Task Management – Required Changes
+- **Reported by:** Partner
+- **Date:** 2026-09-09
+- **Priority:** High
+- **Status:** Scheduled for v0.9.0
+- **Client feedback verbatim:**
+
+> **Task Management – Required Changes**
+>
+> **1. Task Creation**
+> - All users should be able to create a new task.
+> - Every newly created task must have the status "Pending Approval."
+> - The task must be approved by either: Partner, or Admin Staff.
+> - After approval, the task becomes active.
+>
+> **2. Task Description**
+> - Increase the size of the Description field in the Add Task form.
+> - Use a larger multi-line text box so users can easily enter and read longer descriptions.
+>
+> **3. Task Status** — the following statuses should be available: Pending Approval · To Do · In Progress · Completed · Rejected
+>
+> **4. Editing Existing Tasks**
+> - Users should be able to propose changes to an existing task, including: Description, Due date/time, Responsible person, Priority, Status.
+> - Any edit made by a regular user must be submitted for Partner/Admin Staff approval.
+> - The existing approved information should remain unchanged until the edit is approved.
+> - Once approved, the new information replaces the previous information.
+> - Partner/Admin Staff should be able to Approve or Reject the requested changes.
+>
+> **5. Approval & Audit** — the system should record: Created by · Approved/rejected by · Approval/rejection date · Requested changes · Previous values · New values
+>
+> **Important:** Approval permissions must be restricted to Partner and Admin Staff only, while all users can create tasks and submit edit requests.

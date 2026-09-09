@@ -1,24 +1,31 @@
 {
   "name": "an-law-firm",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "private": true,
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "node node_modules/next/dist/bin/next dev",
-    "build": "node node_modules/prisma/build/index.js generate && node node_modules/prisma/build/index.js db push && node node_modules/tsx/dist/cli.mjs prisma/seed.ts && node node_modules/next/dist/bin/next build",
+    "build": "node node_modules/prisma/build/index.js generate && node node_modules/next/dist/bin/next build",
     "start": "node node_modules/next/dist/bin/next start",
     "lint": "node node_modules/next/dist/bin/next lint",
     "db:generate": "node node_modules/prisma/build/index.js generate",
-    "db:push": "node node_modules/prisma/build/index.js db push",
-    "db:seed": "node node_modules/tsx/dist/cli.mjs prisma/seed.ts",
+    "db:seed": "npm run db:seed:reference",
     "db:studio": "node node_modules/prisma/build/index.js studio",
-    "render-build": "node node_modules/prisma/build/index.js generate && node node_modules/prisma/build/index.js db push && node node_modules/tsx/dist/cli.mjs prisma/seed.ts && node node_modules/next/dist/bin/next build",
+    "render-build": "node node_modules/prisma/build/index.js generate && node node_modules/next/dist/bin/next build",
     "next": "node node_modules/next/dist/bin/next",
     "test": "node node_modules/vitest/vitest.mjs",
     "test:ui": "node node_modules/vitest/vitest.mjs --ui",
-    "test:run": "node node_modules/vitest/vitest.mjs run"
+    "test:run": "node node_modules/vitest/vitest.mjs run",
+    "db:migrate": "node node_modules/prisma/build/index.js migrate deploy",
+    "db:diff": "node node_modules/prisma/build/index.js migrate diff",
+    "db:push:local": "node scripts/db-push-local.cjs",
+    "release": "npm run db:migrate && npm run db:seed:reference",
+    "db:seed:reference": "node node_modules/tsx/dist/cli.mjs prisma/seed/cli.ts reference",
+    "db:seed:demo": "node node_modules/tsx/dist/cli.mjs prisma/seed/cli.ts demo",
+    "db:policy:reset": "node node_modules/tsx/dist/cli.mjs prisma/seed/cli.ts reset",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "prisma": {
     "seed": "node node_modules/tsx/dist/cli.mjs prisma/seed.ts"
@@ -43,6 +50,7 @@
     "react-day-picker": "^9.14.0",
     "react-dom": "^18",
     "recharts": "^3.8.1",
+    "server-only": "^0.0.1",
     "shadcn": "^4.1.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",

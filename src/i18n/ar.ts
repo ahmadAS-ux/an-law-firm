@@ -1,4 +1,8 @@
 export const ar: Record<string, string> = {
+  "auth.devSecret": "رمز الدخول التجريبي",
+  "auth.unavailable": "تسجيل الدخول غير متاح — تواصل مع المسؤول",
+  "auth.failed": "تعذر تسجيل الدخول. تحقق من بيانات الدخول.",
+
   "app.title": "عبدالله العامري ود.نواف آل الشيخ للمحاماة والاستشارات القانونية",
   "app.titleEn": "Abdullah Alaamri & Dr.Nawaf Alsheikh Law Firm",
   "nav.dashboard": "لوحة التحكم",

@@ -1,3 +1,17 @@
+## v0.7.0 — Safe baseline: seed safety, migrations, auth and upload hardening
+
+Status: ready for implementation review. Verification and manual gates: LAST_SESSION.md.
+
+- Preserve previously untracked report handlers in a separate unverified source commit.
+- Split reference/demo/policy seeds. Preserve editable permission choices; protect demo relationships and retain audited users.
+- Add original-schema baseline and replay-safe additions for private file storage and demo provenance. Separate builds from DB release commands.
+- Signed expiring Edge-compatible sessions, opt-in secret-protected test login, safe client user DTO and inactive/deleted-user rejection.
+- Private upload/download path, legacy URL denial, scoped read versus delete, soft deletion and resumable checksummed migration.
+- Server-only permission loading with missing-context denial and audited locked-row violations.
+- Add unit and PostgreSQL/HTTP verification, operator cutover/restore runbook and explicit pilot gates.
+
+Manual staging reconciliation and visual/implementation reviews remain pending; no release sign-off is claimed.
+
 # Changelog
 
 All notable changes to A&N LPMS.

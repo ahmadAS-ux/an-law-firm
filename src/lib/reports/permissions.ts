@@ -1,15 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import type { PermissionSnapshot, ReportScope, ReportUser } from "./types";
+import type { ReportScope, ReportUser } from "./types";
 
-export async function buildPermissionSnapshot(userId: string): Promise<PermissionSnapshot> {
-  const rolePerms = await prisma.rolePermission.findMany({
-    where: { role: { users: { some: { id: userId } } }, granted: true },
-    include: { permission: true },
-  });
-  const granted = new Set<string>(rolePerms.map((rp) => rp.permission.key));
-  const scopes = new Map<string, string>(rolePerms.map((rp) => [rp.permission.key, rp.scope]));
-  return { granted, scopes };
-}
+export { buildPermissionSnapshot } from "../permissions.server";
 
 export async function resolveReportScope(
   currentUser: ReportUser,

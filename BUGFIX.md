@@ -300,3 +300,19 @@
 - Never fix a bug without logging it here first
 - Bump the patch version when fixing: `v0.3.0 → v0.3.1`
 - Move to Fixed section with the version it was resolved in
+
+## v0.7.0 blockers / assumptions — 2026-09-09
+
+- Baseline: 20/20 original tests, TypeScript and lint passed. Preserved source commit: 29bf2e2.
+- Resolved command/test failures and exact available diagnostics: docs/verification/resolved-failures.md. Final output files are docs/verification/unit-tests.log, lint.log, build-isolation.log and integration.log.
+- Next.js remains 14.2.15 by explicit scope; npm audit reports vulnerabilities (full JSON and summary in docs). Must close before real client data; v0.8.0 target. Seed-data auto-deploy exception accepted by Ahmad.
+- Legacy permission checks and auth-only endpoints remain: see docs/AUTHZ_INVENTORY.md. Target v0.8.0; not silently migrated.
+- Part A confirmed by user, not independently verified. Remote schema reconciliation, persistent storage, real dump restore, Antigravity visual review and separate implementation review remain operator/reviewer work.
+- PostgreSQL 18.4 is the installed local instance (prompt permits local instance as alternative to Docker postgres:16). Used loopback 55437 only.
+- Non-provenance model records are protected in demo cleanup, derived from actual Prisma DMMF. Demo fixtures use synthetic example.invalid identities and avoid assigning department/team managers, since those reference rows are protected.
+- Existing role-null users are backfilled only in roleId; no department assignment or business record changes occur in reference seeding.
+- Test-only storage file public/uploads/test-deny.pdf and local database/cache are gitignored and retained; no user files deleted. .env untouched.
+- The factual prompt scan matched environment variable identifiers in the baseline/prompt, not secret values; these required artifacts were inspected before staging.
+- Missing-context scoped grants deny. PARTIAL is an existing scope whose previous granted semantics are retained; full scope migration remains v0.8.0.
+- Final plain npm ci failed in cmd.exe dependency postinstall on A&N path. Full verbatim evidence: docs/verification/npm-ci.log. Resolved: npm ci passed with the process-local PowerShell lifecycle shell. Initial isolated inventory diagnostics overlapped dependency replacement and reported missing TypeScript library files; rerun after clean install, never interpreted as code failures.
+- Clean-install Prisma types were absent before explicit generation; pre-generation diagnostics are in docs/verification/typecheck-before-generate.log. Command sequence corrected to run npm run db:generate before TypeScript/tests.

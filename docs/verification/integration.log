@@ -1,0 +1,16 @@
+PASS 1: demo cleanup refuses protected references without deleting them
+PASS 2: demo cleanup retains audited user and audit history, removes only demo targets
+PASS 3: real PostgreSQL reference seed preserves editable choices
+PASS 4: Basic auth protects API and dotted assets
+PASS 5: login assets load after Basic auth without a session; protected page redirects
+PASS 6: API rejects missing, forged and expired sessions as JSON 401
+PASS 7: picker requires secret; login and me share safe DTO
+PASS 8: handlers reject inactive and soft-deleted identities despite signed token
+PASS 9: existing legacy public file is denied both anonymously and with credentials
+PASS 10: list/download scope agrees; assigned employee can read but cannot delete
+PASS 11: download rejects traversal and absolute storage keys
+PASS 12: new uploads use private storage; partner deletion is soft and hides download
+PASS 13: locked matrix edit rejected and audited
+PASS 14: picker disabled by server flag
+PASS 15: missing signing secret fails closed
+All 15 integration checks passed

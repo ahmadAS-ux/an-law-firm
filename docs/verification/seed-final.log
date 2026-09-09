@@ -1,0 +1,4 @@
+
+> an-law-firm@0.7.0 db:seed:reference
+> node node_modules/tsx/dist/cli.mjs prisma/seed/cli.ts reference
+

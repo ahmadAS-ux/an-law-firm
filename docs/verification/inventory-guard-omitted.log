@@ -1,0 +1,6 @@
+.local-test/inventory/8/src/app/api/reports/performance/drilldown/route.ts(3,48): error TS2307: Cannot find module '@/lib/reports/route-guard' or its corresponding type declarations.
+.local-test/inventory/8/src/app/api/reports/performance/export/route.ts(1,48): error TS2307: Cannot find module '@/lib/reports/route-guard' or its corresponding type declarations.
+.local-test/inventory/8/src/app/api/reports/performance/route.ts(3,48): error TS2307: Cannot find module '@/lib/reports/route-guard' or its corresponding type declarations.
+.local-test/inventory/8/src/app/api/reports/utilization/drilldown/route.ts(3,48): error TS2307: Cannot find module '@/lib/reports/route-guard' or its corresponding type declarations.
+.local-test/inventory/8/src/app/api/reports/utilization/export/route.ts(1,48): error TS2307: Cannot find module '@/lib/reports/route-guard' or its corresponding type declarations.
+.local-test/inventory/8/src/app/api/reports/utilization/route.ts(3,48): error TS2307: Cannot find module '@/lib/reports/route-guard' or its corresponding type declarations.

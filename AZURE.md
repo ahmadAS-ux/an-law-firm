@@ -113,7 +113,7 @@ NEXTAUTH_SECRET=           # Strong random string — generate with: openssl ran
 2. Create Azure Database for PostgreSQL — Flexible Server
 3. Set all environment variables in Azure → App Service → Configuration
 4. Connect GitHub repo to Azure App Service for deployment
-5. Run `prisma db push` against Azure PostgreSQL (via deployment script)
+5. Run committed migrations via `npm run release` after baselining an existing database
 6. Run seed script to create initial admin user
 7. Smoke-test all modules on Azure URL before switching DNS
 8. Keep Render.com live until Azure is confirmed stable (minimum 48 hours)
@@ -240,3 +240,25 @@ Azure-specific rules that are non-negotiable:
 | Phase B — Render decommissioned | ⏳ | |
 | Phase C — Calendar sync live | ⏳ | |
 | v1.0.0 go-live | ⏳ | |
+
+
+## v1.0 storage requirement
+
+Durable Azure Blob storage is required at v1.0 behind the authenticated download route; do not expose public or browser SAS URLs. Staging requires a verified attached persistent disk before pilot; otherwise uploads are ephemeral. Entra MFA replaces the bridge password authentication. Outlook/Graph is v1.0; Zoho is v1.1+.
+
+## v0.7.0 runtime settings
+
+| Variable | Purpose |
+|---|---|
+| DATABASE_URL | PostgreSQL connection, supplied privately |
+| NEXTAUTH_SECRET | Signing secret, at least 32 UTF-8 bytes |
+| DEV_LOGIN_PICKER_ENABLED | Explicit true for seed-data tests only; unset before pilot |
+| DEV_LOGIN_SECRET | Shared test secret, never client configuration or stored in browser |
+| STAGING_BASIC_AUTH | user:password for the independent staging boundary |
+| UPLOAD_DIR | Private persistent storage root; default .uploads is local-only |
+| ALLOW_DEMO_SEED | Explicit true for disposable databases only; unset on production/shared staging |
+| CONFIRM_POLICY_RESET | Explicit yes for intentional admin reset; unset normally |
+| POLICY_RESET_ACTOR | Active non-deleted Partner/System Admin user id for audited reset |
+| NEXT_PUBLIC_APP_ENV | Presentation label only, never authentication |
+
+Build: npm ci && npm run build. Reference seed: npm run db:seed:reference. Release after baselining: npm run release. Paid Render pre-deploy availability and mounted disk must be verified by Ahmad; dashboard command changes are manual. See docs/MIGRATION_BASELINE.md.

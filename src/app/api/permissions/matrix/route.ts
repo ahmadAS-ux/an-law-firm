@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/api-permissions";
-import { hasPermissionDb } from "@/lib/permissions";
+import { hasPermissionDb } from "@/lib/permissions.server";
 import { createAuditLog } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +41,8 @@ export async function PATCH(request: NextRequest) {
 
   const rejected = body.filter((u) => lockedSet.has(`${u.roleId}:${u.permissionId}`));
   if (rejected.length > 0) {
-    return NextResponse.json({ error: "Cannot modify locked permissions" }, { status: 400 });
+    await createAuditLog(user.id, "PERMISSION_LOCK_VIOLATION", "RolePermission", "matrix", { rejected }, null, "PERMISSION");
+    return NextResponse.json({ error: "Cannot modify locked permissions" }, { status: 409 });
   }
 
   // Capture before state for audit

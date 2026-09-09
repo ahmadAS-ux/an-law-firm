@@ -1,0 +1,106 @@
+
+> an-law-firm@0.7.0 build
+> node node_modules/prisma/build/index.js generate && node node_modules/next/dist/bin/next build
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to .\node_modules\@prisma\client in 624ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+  ▲ Next.js 14.2.15
+  - Environments: .env
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: Unable to snapshot resolve dependencies
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: Unable to snapshot resolve dependencies
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: Unable to snapshot resolve dependencies
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/37) ...
+   Generating static pages (9/37) 
+   Generating static pages (18/37) 
+   Generating static pages (27/37) 
+ ✓ Generating static pages (37/37)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    4.01 kB         117 kB
+├ ○ /_not-found                          880 B          88.2 kB
+├ ƒ /api/audit-log                       0 B                0 B
+├ ƒ /api/auth/login                      0 B                0 B
+├ ƒ /api/auth/me                         0 B                0 B
+├ ƒ /api/auth/users                      0 B                0 B
+├ ƒ /api/cases                           0 B                0 B
+├ ƒ /api/cases/[id]                      0 B                0 B
+├ ƒ /api/clients                         0 B                0 B
+├ ƒ /api/clients/[id]                    0 B                0 B
+├ ƒ /api/conflict-check                  0 B                0 B
+├ ƒ /api/dashboard/summary               0 B                0 B
+├ ƒ /api/departments                     0 B                0 B
+├ ƒ /api/departments/[id]                0 B                0 B
+├ ƒ /api/files                           0 B                0 B
+├ ƒ /api/files/[id]                      0 B                0 B
+├ ƒ /api/files/[id]/download             0 B                0 B
+├ ○ /api/health                          0 B                0 B
+├ ƒ /api/matters                         0 B                0 B
+├ ƒ /api/matters/[id]                    0 B                0 B
+├ ƒ /api/notifications                   0 B                0 B
+├ ƒ /api/permissions/matrix              0 B                0 B
+├ ƒ /api/reports                         0 B                0 B
+├ ƒ /api/reports/config                  0 B                0 B
+├ ƒ /api/reports/performance             0 B                0 B
+├ ƒ /api/reports/performance/drilldown   0 B                0 B
+├ ƒ /api/reports/performance/export      0 B                0 B
+├ ƒ /api/reports/utilization             0 B                0 B
+├ ƒ /api/reports/utilization/drilldown   0 B                0 B
+├ ƒ /api/reports/utilization/export      0 B                0 B
+├ ƒ /api/tasks                           0 B                0 B
+├ ƒ /api/tasks/[id]                      0 B                0 B
+├ ƒ /api/uploads-denied                  0 B                0 B
+├ ƒ /api/users                           0 B                0 B
+├ ƒ /api/users/assignable                0 B                0 B
+├ ƒ /api/work-logs                       0 B                0 B
+├ ƒ /api/work-logs/[id]                  0 B                0 B
+├ ƒ /api/work-types                      0 B                0 B
+├ ○ /audit-log                           1.93 kB        97.6 kB
+├ ○ /calendar                            579 B          93.5 kB
+├ ○ /cases                               5.6 kB          183 kB
+├ ƒ /cases/[id]                          2.77 kB         127 kB
+├ ○ /clients                             3.93 kB         157 kB
+├ ƒ /clients/[id]                        3.77 kB         128 kB
+├ ○ /conflict-check                      7.07 kB         113 kB
+├ ○ /files                               1.41 kB        88.8 kB
+├ ○ /hr-reports                          26 kB           280 kB
+├ ○ /login                               6.02 kB         141 kB
+├ ○ /matters                             5.91 kB         176 kB
+├ ○ /notifications                       1.91 kB         114 kB
+├ ○ /services                            4.52 kB         150 kB
+├ ○ /settings                            4.22 kB         110 kB
+├ ○ /settings/departments                8.52 kB         114 kB
+├ ○ /settings/permissions                4.61 kB         110 kB
+├ ○ /tasks                               5.79 kB         183 kB
+├ ƒ /tasks/[id]                          2.19 kB         115 kB
+├ ○ /users                               3.84 kB         157 kB
+├ ○ /work-logs                           4.64 kB         173 kB
+├ ○ /work-logs/dashboard                 1.63 kB         187 kB
+└ ○ /work-logs/my-logs                   1.12 kB         102 kB
++ First Load JS shared by all            87.4 kB
+  ├ chunks/2117-b27e5e0a9d9083a4.js      31.8 kB
+  ├ chunks/fd9d1056-3fbd1a0126a65779.js  53.6 kB
+  └ other shared chunks (total)          1.97 kB
+
+
+ƒ Middleware                             27.5 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

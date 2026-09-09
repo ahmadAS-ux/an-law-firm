@@ -1,0 +1,62 @@
+
+> an-law-firm@0.7.0 typecheck
+> node node_modules/typescript/bin/tsc --noEmit
+
+prisma/seed/demo.ts(17,33): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+prisma/seed/demo.ts(25,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+prisma/seed/demo.ts(28,32): error TS2339: Property 'dmmf' does not exist on type 'typeof Prisma'.
+prisma/seed/demo.ts(29,51): error TS7006: Parameter 'f' implicitly has an 'any' type.
+prisma/seed/reset-policy.ts(6,33): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+scripts/test-v070-integration.ts(50,36): error TS7006: Parameter 'r' implicitly has an 'any' type.
+scripts/test-v070-integration.ts(51,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+scripts/test-v070-integration.ts(52,40): error TS7006: Parameter 'u' implicitly has an 'any' type.
+scripts/test-v070-integration.ts(53,39): error TS7006: Parameter 'u' implicitly has an 'any' type.
+scripts/test-v070-integration.ts(54,40): error TS7006: Parameter 'u' implicitly has an 'any' type.
+scripts/test-v070-integration.ts(54,71): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/app/api/cases/route.ts(30,23): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'CaseWhereInput'.
+src/app/api/clients/[id]/route.ts(30,40): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/app/api/clients/route.ts(17,27): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'ClientWhereInput'.
+src/app/api/clients/route.ts(34,50): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/app/api/conflict-check/route.ts(45,21): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/app/api/conflict-check/route.ts(53,19): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/app/api/files/[id]/route.ts(21,36): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/app/api/files/route.ts(41,51): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/app/api/files/route.ts(41,104): error TS7031: Binding element '_key' implicitly has an 'any' type.
+src/app/api/files/route.ts(41,115): error TS7031: Binding element '_url' implicitly has an 'any' type.
+src/app/api/matters/route.ts(29,23): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'MatterWhereInput'.
+src/app/api/matters/route.ts(41,47): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'EnumMatterStatusFilter'.
+src/app/api/permissions/matrix/route.ts(40,44): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/permissions/matrix/route.ts(40,67): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/permissions/matrix/route.ts(63,25): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/app/api/reports/route.ts(131,27): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/reports/route.ts(170,36): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/reports/route.ts(173,23): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/reports/route.ts(176,27): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/app/api/reports/route.ts(188,36): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/reports/route.ts(191,23): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/app/api/reports/route.ts(194,31): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/app/api/tasks/route.ts(32,23): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'TaskWhereInput'.
+src/app/api/work-logs/route.ts(20,23): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'WorkLogWhereInput'.
+src/lib/auth.ts(8,34): error TS2694: Namespace '"C:/Users/Administrator/Documents/CLAUDE/A&N law firm/Sand/an-law-firm/node_modules/.prisma/client/default".Prisma' has no exported member 'UserGetPayload'.
+src/lib/permissions.server.ts(59,50): error TS7006: Parameter 'rp' implicitly has an 'any' type.
+src/lib/permissions.server.ts(60,57): error TS7006: Parameter 'rp' implicitly has an 'any' type.
+src/lib/reports/performance.ts(85,30): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/reports/performance.ts(85,33): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/reports/permissions.ts(33,49): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/lib/reports/permissions.ts(44,49): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(20,30): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(20,33): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(29,30): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(29,33): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(38,30): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(38,33): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(40,33): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(40,61): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(40,64): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(56,30): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/lib/reports/utilization.ts(56,33): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/types/index.ts(1,15): error TS2305: Module '"@prisma/client"' has no exported member 'User'.
+src/types/index.ts(1,21): error TS2305: Module '"@prisma/client"' has no exported member 'Client'.
+src/types/index.ts(1,29): error TS2305: Module '"@prisma/client"' has no exported member 'Case'.
+src/types/index.ts(1,35): error TS2305: Module '"@prisma/client"' has no exported member 'Task'.
+src/types/index.ts(1,41): error TS2305: Module '"@prisma/client"' has no exported member 'WorkLog'.

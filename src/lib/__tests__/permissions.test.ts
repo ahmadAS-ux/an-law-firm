@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { hasPermission, getPermissions, hasPermissionDb } from "@/lib/permissions";
+import { hasPermission, getPermissions } from "@/lib/permissions";
+import { hasPermissionDb } from "@/lib/permissions.server";
 
 // ── hasPermission (legacy sync matrix) ──────────────────────────────────────
 
@@ -67,7 +68,7 @@ const { prisma } = await import("@/lib/prisma");
 
 describe("hasPermissionDb — DB-driven", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it("returns false when user has no roleId", async () => {
@@ -168,5 +169,16 @@ describe("hasPermissionDb — DB-driven", () => {
       scope: "OWN",
     } as never);
     expect(await hasPermissionDb("user-1", "editOwnWorkLog", { ownerId: "user-2" })).toBe(false);
+  });
+});
+
+
+describe("deny by default scopes", () => {
+  beforeEach(() => vi.resetAllMocks());
+  it.each(["OWN", "OWN_DEPARTMENT", "UNKNOWN"])("denies %s without context", async (scope) => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ roleId: "r", departmentId: "d" } as never);
+    vi.mocked(prisma.permission.findUnique).mockResolvedValue({ id: "p" } as never);
+    vi.mocked(prisma.rolePermission.findUnique).mockResolvedValue({ granted: true, scope } as never);
+    expect(await hasPermissionDb("u", "p")).toBe(false);
   });
 });

@@ -1,6 +1,18 @@
+## Product goal (the "why" — every decision in this prompt serves this)
+A&N LPMS must become a **compact, complete law-firm practice system that the firm can run as a live pilot for 3 to 12 months with all of its real users** — the two Partners, System Admin, Department Managers, Employees, Admin Staff and Accountant — managing real clients, cases, matters, tasks, work logs, files and HR reports. After the pilot the firm adopts the product for good and it moves to **Microsoft Azure with Entra ID SSO and Outlook Calendar integration** (v1.0), then Zoho Books (v1.1+).
+
+What "pilot-ready" means for this session and the next two (v0.7.0 → v0.9.0):
+- Real people with real data will use staging, so **nothing that leaks data, forges a login, or silently resets settings may remain**. That is why v0.7.0 exists.
+- The firm's latest feedback (Task approvals, Partner + Admin Staff only) is a pilot requirement, delivered in v0.9.0 on top of v0.8.0 authorization.
+- The pilot runs on Render staging until Azure; the runbook in this prompt is how staging becomes trustworthy enough for that.
+- Every user account the firm needs must exist with the correct role by the end of v0.8.0 (seed reference data creates roles now; real user records are created by Ahmad through Settings > Users, never by demo seed).
+
+When a choice in this prompt is ambiguous, pick the option that best serves "real users, real data, 3–12 months, then Microsoft". Ahmad trusts the model's judgement on such choices; record each one under "Assumptions" in `LAST_SESSION.md`.
+
+
 # A&N LPMS — Roadmap
 
-> **Current Version:** `v0.6.2`
+> **Current Version:** `v0.7.0`
 > **Stage:** Phase 1 — Active Development (Staging on Render.com)
 > **Next Milestone:** `v1.0.0` = Live on Azure with Microsoft SSO
 > **UI Audit Cycle:** v0.4.4 Antigravity audit complete — all 8 confirmed issues fixed in v0.4.5
@@ -34,8 +46,8 @@ Examples:
 
 ### ✅ Done
 - [x] Project setup (Next.js 14, Tailwind, Prisma, shadcn/ui)
-- [x] Auth (cookie-based dev login, route protection)
-- [x] Users & Permissions module
+- [ ] Pilot authentication — individual credentials required in v0.8.0
+- [ ] Pilot authorization — full DB enforcement required in v0.8.0
 - [x] Dashboard (basic)
 - [x] Clients module
 - [x] Cases / Matters module
@@ -134,3 +146,23 @@ Reason: Prisma defaults to Restrict, but explicit declaration prevents future ac
 1. Before starting any session — check what's **In Progress** first
 2. After finishing a module — move it from Pending → Done, bump the version
 3. Keep this file honest — if something is half-done, say so
+
+## Scheduled milestones
+
+- v0.7.0: safe baseline; ready for implementation review after checks.
+- v0.8.0: individual password authentication (or Entra if tenant available), DB authorization on every route, Next.js advisory upgrade, correct real-user accounts, System Admin testing exception default-off.
+- v0.9.0: task approvals, Partner/Admin Staff only; rejected tasks final; remove testing exception unless reconfirmed.
+- Pilot gate review: all eight gates evidenced, then 3–12 months on Render with real users/data.
+- v1.0.0: Azure, Entra SSO/MFA, Outlook/Graph, private Azure Blob downloads through authenticated proxy.
+- v1.1+: Zoho Books.
+
+### Pilot entry gates (scheduled across v0.7.0–v0.9.0; NOT expanded into this session)
+Real users and real client data may enter staging only when **all** of these are true. Write this list verbatim into `ROADMAP.md` and `SECURITY.md`; v0.7.0 delivers only the items marked (v0.7.0).
+1. **Individual authentication** — each person logs in with their own credential mapped to exactly one application user; an Employee cannot obtain a Partner session by changing `userId`. The shared-secret picker in this prompt is for the seed-data period only. Delivered in **v0.8.0** as per-user passwords (bcrypt, admin-set initial password, forced change at first login, lockout after repeated failures) — the bridge until Entra ID; if Entra tenant access arrives earlier, Entra replaces it. Verified by a test that a valid session for user A cannot act as user B.
+2. **Authorization enforced from the DB matrix on every route** — v0.8.0.
+3. **System Admin testing exception disabled** — before the pilot, not merely "in production". v0.8.0 ships it default-off with an explicit pilot flag; v0.9.0 removes it unless the firm re-confirms.
+4. **Next.js advisory closed** (upgrade) — v0.8.0.
+5. **Persistent private storage** for uploads on staging (attached disk) — runbook step in v0.7.0, verified before pilot.
+6. **Tested restore** — one full database + file restore rehearsal documented with evidence — runbook step in v0.7.0, executed by Ahmad before pilot.
+7. **Builds perform no database mutations. Reference seeding preserves editable settings and existing business records, while enforcing explicitly locked policy** — (v0.7.0).
+8. **No forgeable or indefinitely reusable sessions; no public file URLs** — (v0.7.0).

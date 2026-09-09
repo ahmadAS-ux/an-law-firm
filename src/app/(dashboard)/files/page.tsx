@@ -16,7 +16,7 @@ export default function FilesPage() {
       {files.map((f) => (
         <a
           key={f.id}
-          href={f.url}
+          href={`/api/files/${f.id}/download`}
           target="_blank"
           rel="noreferrer"
           className="flex flex-col items-center rounded-md border border-heritage-gold/20 p-4 text-center text-sm hover:bg-white/5"

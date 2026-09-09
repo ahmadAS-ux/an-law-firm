@@ -6,7 +6,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { hasPermission } from "@/lib/permissions";
 import { createAuditLog } from "@/lib/audit";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+import { canReadFile } from "@/lib/file-access";
+import { newStorageKey, resolveStorageKey } from "@/lib/file-storage";
+export const dynamic = "force-dynamic";
 const MAX_BYTES = 10 * 1024 * 1024;
 const ALLOWED = new Set([
   "application/pdf",
@@ -24,7 +26,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const caseId = searchParams.get("caseId");
 
-  const where: { caseId?: string; case?: { assignedToId?: string } } = {};
+  const where: { deletedAt: null; caseId?: string; case?: { assignedToId?: string } } = { deletedAt: null };
   if (caseId) where.caseId = caseId;
   if (user.role === "EMPLOYEE") {
     where.case = { assignedToId: user.id };
@@ -36,7 +38,7 @@ export async function GET(request: Request) {
     take: 200,
     include: { case: { include: { client: true } }, uploadedBy: true },
   });
-  return NextResponse.json({ files });
+  return NextResponse.json({ files: files.filter((file) => canReadFile(user, file)).map(({ storageKey: _key, url: _url, ...file }) => { void _key; void _url; return file; }) });
 }
 
 export async function POST(request: Request) {
@@ -78,20 +80,23 @@ export async function POST(request: Request) {
   });
   const version = existing[0] ? existing[0].version + 1 : 1;
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
+  const ext: Record<string, string> = { "application/pdf": "pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx", "image/jpeg": "jpg", "image/png": "png" };
+  const storageKey = newStorageKey(ext[mimeType]);
+  const fsPath = resolveStorageKey(storageKey);
+  await mkdir(path.dirname(fsPath), { recursive: true });
   const buf = Buffer.from(await file.arrayBuffer());
-  const diskName = `${caseId}-${version}-${Date.now()}-${safeBase}`;
-  const fsPath = path.join(UPLOAD_DIR, diskName);
-  await writeFile(fsPath, buf);
 
-  const url = `/uploads/${diskName}`;
+
+  await writeFile(fsPath, buf, { flag: "wx" });
+
+
   const rec = await prisma.file.create({
     data: {
       name: safeBase,
       originalName,
       mimeType,
       size: buf.length,
-      url,
+      storageKey,
       caseId,
       uploadedById: user.id,
       version,
@@ -99,5 +104,6 @@ export async function POST(request: Request) {
   });
 
   await createAuditLog(user.id, "CREATE", "File", rec.id, { name: safeBase });
-  return NextResponse.json({ file: rec });
+  const { storageKey: _key, url: _url, ...fileDTO } = rec; void _key; void _url;
+  return NextResponse.json({ file: fileDTO });
 }

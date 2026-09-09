@@ -1,4 +1,8 @@
 export const en: Record<string, string> = {
+  "auth.devSecret": "Test login secret",
+  "auth.unavailable": "Login unavailable — contact administrator",
+  "auth.failed": "Unable to sign in. Check your credentials.",
+
   "app.title":
     "Abdullah Alaamri & Dr.Nawaf Alsheikh Law Firm — Legal & Advisory",
   "app.titleEn": "Abdullah Alaamri & Dr.Nawaf Alsheikh Law Firm",

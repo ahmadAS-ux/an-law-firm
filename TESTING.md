@@ -7,7 +7,7 @@
 | Vitest | Configured and running |
 | @testing-library/react | Installed |
 | @testing-library/jest-dom | Installed |
-| jsdom | Configured as test environment |
+| Node | Active Vitest environment for server/pure tests |
 
 ## Where Tests Live
 
@@ -17,7 +17,7 @@ src/lib/__tests__/
   api-permissions.test.ts   — unit tests for API-layer permission helpers
 ```
 
-Tests are collected under `src/lib/__tests__/` — not co-located next to source files. Keep new tests there.
+Tests are collected under `src/lib/__tests__/` and `prisma/seed/__tests__/`.
 
 ## Running Tests
 
@@ -69,3 +69,20 @@ MSW intercepts network-layer calls and is useful for integration tests against P
 ## Playwright (E2E) — not yet set up
 
 End-to-end tests are not yet configured. When added, use `http://localhost:3000` as the base URL and place tests in an `e2e/` folder at the project root (outside `src/`).
+
+## v0.7.0 verification
+
+The v0.7.0 prompt authorizes HTTP integration coverage in addition to the existing unit-test guidance. Vitest now uses the Node environment for pure/server tests and includes prisma/seed/__tests__. Browser rendering still requires the separate Antigravity review.
+
+On this Windows workspace, use process-local configuration:
+
+```powershell
+$env:npm_config_script_shell = Join-Path $PSHOME 'pwsh.exe'
+npm ci
+npm run db:generate
+npm run typecheck
+npm run lint
+npm run test:run
+```
+
+Final results: 52 unit tests, TypeScript and lint passed. Build isolation used an unreachable local DATABASE_URL with auth credentials cleared. The local production harness scripts/test-v070-integration.ts passed 15 grouped database/HTTP checks after fresh migrations and reference seed. It requires a disposable PostgreSQL database at 127.0.0.1:55437 and starts its own localhost app servers. Use a new database for each run: tests deliberately leave protected business fixtures and audit history. Never target shared or remote databases. Evidence is in docs/verification; manual staging and restore steps are in docs/MIGRATION_BASELINE.md.

@@ -124,3 +124,44 @@ As of v0.5.0, permissions are stored in the database (Role, Permission, RolePerm
 - Never skip server-side permission checks even if client already hides the UI
 - Never commit `.env` or any file containing real credentials
 - Flag any code that stores passwords in plain text — always use hashed/Microsoft SSO
+
+### Pilot entry gates (scheduled across v0.7.0–v0.9.0; NOT expanded into this session)
+Real users and real client data may enter staging only when **all** of these are true. Write this list verbatim into `ROADMAP.md` and `SECURITY.md`; v0.7.0 delivers only the items marked (v0.7.0).
+1. **Individual authentication** — each person logs in with their own credential mapped to exactly one application user; an Employee cannot obtain a Partner session by changing `userId`. The shared-secret picker in this prompt is for the seed-data period only. Delivered in **v0.8.0** as per-user passwords (bcrypt, admin-set initial password, forced change at first login, lockout after repeated failures) — the bridge until Entra ID; if Entra tenant access arrives earlier, Entra replaces it. Verified by a test that a valid session for user A cannot act as user B.
+2. **Authorization enforced from the DB matrix on every route** — v0.8.0.
+3. **System Admin testing exception disabled** — before the pilot, not merely "in production". v0.8.0 ships it default-off with an explicit pilot flag; v0.9.0 removes it unless the firm re-confirms.
+4. **Next.js advisory closed** (upgrade) — v0.8.0.
+5. **Persistent private storage** for uploads on staging (attached disk) — runbook step in v0.7.0, verified before pilot.
+6. **Tested restore** — one full database + file restore rehearsal documented with evidence — runbook step in v0.7.0, executed by Ahmad before pilot.
+7. **Builds perform no database mutations. Reference seeding preserves editable settings and existing business records, while enforcing explicitly locked policy** — (v0.7.0).
+8. **No forgeable or indefinitely reusable sessions; no public file URLs** — (v0.7.0).
+
+
+## v0.7.0 controls and open items
+
+- Signed expiring session tokens use Web Crypto HMAC. Middleware verifies signatures/expiry; server handlers reload users and reject inactive/soft-deleted identities. Missing/short signing secrets fail closed.
+- Seed-data picker is off by default and requires a shared test secret; Basic auth independently covers staging paths. Shared-secret login is NOT individual pilot authentication.
+- File bytes are private; authenticated downloads enforce the same read policy as metadata. Delete authority remains manageFiles. Legacy public URLs are denied even if source files remain. Soft-delete retains bytes for future controlled purge.
+- Scoped DB grants deny missing ownership/department context; server-only module prevents Prisma imports into client hooks. Legacy route checks remain scheduled for v0.8.0: see docs/AUTHZ_INVENTORY.md.
+- Reference seed preserves editable choices and existing assignments; only explicitly locked Partner/System Admin policy is reasserted. Policy resets require a valid actor and atomically record before/after history. Demo provenance is explicit; protected incoming references prevent cleanup and audited demo users are retained inactive.
+- Next.js remains 14.2.15 by explicit scope. The official December 2025 advisory identified 14.2.35 as its 14.x fix; current full audit findings are in docs/dependency-review-2026-09.md. Upgrade/review in v0.8.0 is mandatory before real client data enters an exposed environment.
+- Ahmad explicitly accepts v0.7.0 staging auto-deploy while staging contains seed data only. This does not satisfy pilot entry or implementation review.
+- System Admin selector exception is DOCUMENTED ONLY in v0.7.0; v0.8.0 default-off; must be disabled before real users/data enter the pilot. App TOTP is dropped; Entra supplies MFA at SSO.
+- Part A is user-confirmed. Persistent storage configuration, staging reconciliation, real backup restore evidence and implementation review remain manual gates.
+
+## v0.7.0 runtime settings
+
+| Variable | Purpose |
+|---|---|
+| DATABASE_URL | PostgreSQL connection, supplied privately |
+| NEXTAUTH_SECRET | Signing secret, at least 32 UTF-8 bytes |
+| DEV_LOGIN_PICKER_ENABLED | Explicit true for seed-data tests only; unset before pilot |
+| DEV_LOGIN_SECRET | Shared test secret, never client configuration or stored in browser |
+| STAGING_BASIC_AUTH | user:password for the independent staging boundary |
+| UPLOAD_DIR | Private persistent storage root; default .uploads is local-only |
+| ALLOW_DEMO_SEED | Explicit true for disposable databases only; unset on production/shared staging |
+| CONFIRM_POLICY_RESET | Explicit yes for intentional admin reset; unset normally |
+| POLICY_RESET_ACTOR | Active non-deleted Partner/System Admin user id for audited reset |
+| NEXT_PUBLIC_APP_ENV | Presentation label only, never authentication |
+
+Build: npm ci && npm run build. Reference seed: npm run db:seed:reference. Release after baselining: npm run release. Paid Render pre-deploy availability and mounted disk must be verified by Ahmad; dashboard command changes are manual. See docs/MIGRATION_BASELINE.md.

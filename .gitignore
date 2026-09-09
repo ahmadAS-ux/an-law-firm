@@ -42,3 +42,14 @@ prisma/*.db
 prisma/*.db-journal
 prisma/*.db-wal
 prisma/*.db-shm
+
+.uploads/
+.local-test/
+scripts/migrate-uploads.progress.jsonl
+.continue/
+.serena/
+.vscode/
+.idea/
+
+public/uploads/test-deny.pdf
+.claude/

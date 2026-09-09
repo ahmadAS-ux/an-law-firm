@@ -1,3 +1,15 @@
+## Product goal (the "why" — every decision in this prompt serves this)
+A&N LPMS must become a **compact, complete law-firm practice system that the firm can run as a live pilot for 3 to 12 months with all of its real users** — the two Partners, System Admin, Department Managers, Employees, Admin Staff and Accountant — managing real clients, cases, matters, tasks, work logs, files and HR reports. After the pilot the firm adopts the product for good and it moves to **Microsoft Azure with Entra ID SSO and Outlook Calendar integration** (v1.0), then Zoho Books (v1.1+).
+
+What "pilot-ready" means for this session and the next two (v0.7.0 → v0.9.0):
+- Real people with real data will use staging, so **nothing that leaks data, forges a login, or silently resets settings may remain**. That is why v0.7.0 exists.
+- The firm's latest feedback (Task approvals, Partner + Admin Staff only) is a pilot requirement, delivered in v0.9.0 on top of v0.8.0 authorization.
+- The pilot runs on Render staging until Azure; the runbook in this prompt is how staging becomes trustworthy enough for that.
+- Every user account the firm needs must exist with the correct role by the end of v0.8.0 (seed reference data creates roles now; real user records are created by Ahmad through Settings > Users, never by demo seed).
+
+When a choice in this prompt is ambiguous, pick the option that best serves "real users, real data, 3–12 months, then Microsoft". Ahmad trusts the model's judgement on such choices; record each one under "Assumptions" in `LAST_SESSION.md`.
+
+
 # A&N Law Firm — LPMS (Claude Code Context)
 
 ## Project location
@@ -45,7 +57,7 @@ Full version naming table: see **ROADMAP.md → Version Naming Rules**.
 - **Brand colors:** near-black `#1A1A1A`, heritage-gold `#B8963E`, warm-gray `#3D3D3D`
 - **Fonts:** Tajawal (Arabic), DM Sans (English body), Cormorant Garamond (English headings)
 - **Default UI direction:** RTL / `lang="ar"`
-- **Prisma** + SQLite locally; PostgreSQL on Render/Azure for production
+- **Prisma** + PostgreSQL in every environment
 - **shadcn/ui** (Slate, CSS variables)
 - **Auth (dev):** HTTP-only cookie `an-auth` — use `getCurrentUser()` / `useAuth()` only
 - **Auth (production):** Microsoft SSO / Entra ID
@@ -60,7 +72,7 @@ Full version naming table: see **ROADMAP.md → Version Naming Rules**.
 - **Bilingual:** Arabic + English strings in `src/i18n/ar.ts` and `src/i18n/en.ts`
 - **BiDi:** English fragments inside Arabic UI MUST be wrapped in `<bdi dir="ltr">`
 - **Permissions:** Enforce on BOTH client (hide UI) and server (API returns 403)
-  - Use `hasPermission` / `checkApiPermission` from `src/lib/permissions.ts`
+  - Use server helpers from `src/lib/permissions.server.ts`; legacy matrix removal is scheduled for v0.8.0
 - **Audit:** Mutating actions must create `AuditLog` rows where spec requires it
 - **Security:** Never skip auth checks, never log secrets, never commit `.env`
 
@@ -111,7 +123,7 @@ Full version naming table: see **ROADMAP.md → Version Naming Rules**.
 ## Build Sequence (production / Render)
 
 ```
-prisma generate → prisma db push → tsx seed.ts → next build
+prisma generate → next build (build only); npm run release is the separate migration/reference step
 ```
 
 > ⚠️ `render.yaml` is overridden by the Render dashboard. Any build command change must be made in BOTH `render.yaml` (for docs) AND the Render dashboard (for actual effect). The Render dashboard is the source of truth.
@@ -165,3 +177,21 @@ Next session should start with: [what's next]
 After outputting the summary in chat, also write the exact same content to
 `LAST_SESSION.md` at the repo root (`an-law-firm/LAST_SESSION.md`),
 overwriting the previous file each time.
+
+
+## v0.7.0 runtime settings
+
+| Variable | Purpose |
+|---|---|
+| DATABASE_URL | PostgreSQL connection, supplied privately |
+| NEXTAUTH_SECRET | Signing secret, at least 32 UTF-8 bytes |
+| DEV_LOGIN_PICKER_ENABLED | Explicit true for seed-data tests only; unset before pilot |
+| DEV_LOGIN_SECRET | Shared test secret, never client configuration or stored in browser |
+| STAGING_BASIC_AUTH | user:password for the independent staging boundary |
+| UPLOAD_DIR | Private persistent storage root; default .uploads is local-only |
+| ALLOW_DEMO_SEED | Explicit true for disposable databases only; unset on production/shared staging |
+| CONFIRM_POLICY_RESET | Explicit yes for intentional admin reset; unset normally |
+| POLICY_RESET_ACTOR | Active non-deleted Partner/System Admin user id for audited reset |
+| NEXT_PUBLIC_APP_ENV | Presentation label only, never authentication |
+
+Build: npm ci && npm run build. Reference seed: npm run db:seed:reference. Release after baselining: npm run release. Paid Render pre-deploy availability and mounted disk must be verified by Ahmad; dashboard command changes are manual. See docs/MIGRATION_BASELINE.md.
